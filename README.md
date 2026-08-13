@@ -18,18 +18,12 @@ Acesta este frontend-ul aplicatiei Akadion, o platforma academica construita in 
 Directorul `/src` este organizat astfel:
 
 * `/api` - Clientul HTTP intern, Query Client-ul si infrastructura pentru comunicarea cu backend-ul, inclusiv gestiunea CSRF.
-* `/auth` - Providerul de context pentru starea globala de autentificare si utilitarele de delogare.
-* `/components` - Componente React reutilizabile:
-  * `/chat` - Widget-ul plutitor pentru asistentul AI Aky.
-  * `/ui` - Componente generice (ex: Butoane, Card-uri, Input-uri).
-  * `AppShell.jsx` - Structura principala (layout) a paginilor, meniul de navigare si tab-urile cursurilor.
-* `/lib` - Servicii, functii utilitare si call-uri de retea:
-  * `courseThemes.ts` - Gestionarea cromaticii per curs.
-  * `conversatii.ts` - Integrarea RAG (AI Chat), quiz si flashcards.
-  * `professorCourses.ts` - Toate apelurile HTTP legate de managementul cursurilor si saptamanilor.
-  * `user.ts` - Metode de gestiune profil si mapari de roluri.
-* `/pages` - Paginile majore ale aplicatiei, rutate independent:
-  * `DashboardPage.tsx`, `CoursesPage.tsx`, `CourseDetailPage.tsx`, `NewCoursePage.tsx`, `ProfilePage.tsx`.
+* `/app` - Shell-ul aplicatiei si layout-urile globale.
+* `/auth` - Providerul de context pentru starea globala de autentificare, guards si utilitarele de delogare.
+* `/components/ui` - Componente UI generice bazate pe shadcn/ui.
+* `/features` - Implementarile feature-urilor aplicatiei (`courses`, `aky-chat`, `study-tools`, `profile`, `admin`, `auth`, `owl-hall`).
+* `/pages` - Wrapper-e subtiri pentru rutare catre implementari din `features`.
+* `/lib` - Utilitare si adaptoare pastrate pentru cod comun sau compatibilitate incrementala.
 
 ## Rulare Locala
 
