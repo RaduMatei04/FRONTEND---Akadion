@@ -1,0 +1,41 @@
+- generic [ref=f1e2]:
+  - complementary [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - generic "AKADION" [ref=f1e5]:
+        - generic [ref=f1e6]:
+          - img "AKADION" [ref=f1e7]
+          - generic [ref=f1e8]: Curiozitate fără limite
+      - generic [ref=f1e10]:
+        - heading "Înveți ce iubești, în ritmul tău." [level=1] [ref=f1e11]
+        - paragraph [ref=f1e12]: Aici nu ești legat de programa fixă a specializării tale — alegi cursurile care te interesează, fie din domeniul tău, fie din altele. Urmărești materialele, îți vezi progresul săptămânal și înveți din curiozitate și dorința de a descoperi lucruri noi.
+        - generic "Beneficii principale" [ref=f1e13]:
+          - generic [ref=f1e14]: Cursuri alese de tine
+          - generic [ref=f1e21]: Progres urmărit săptămânal
+          - generic [ref=f1e28]: Acces pentru studenți și profesori
+  - main [ref=f1e37]:
+    - generic [ref=f1e38]:
+      - generic "Aky AI Assistant" [ref=f1e39]:
+        - img "Aky AI" [ref=f1e41]
+        - generic [ref=f1e42]:
+          - generic [ref=f1e43]: Powered by
+          - generic [ref=f1e44]: Aky RAG
+          - generic [ref=f1e45]: Asistent pentru materiale academice
+      - generic [ref=f1e46]:
+        - heading "Autentificare" [level=2] [ref=f1e50]
+        - generic [ref=f1e51]:
+          - generic [ref=f1e52]:
+            - generic [ref=f1e53]:
+              - generic [ref=f1e54]: Email
+              - textbox "Email" [active] [ref=f1e58]
+            - generic [ref=f1e59]:
+              - generic [ref=f1e60]: Parola
+              - generic [ref=f1e63]:
+                - textbox "Parola" [ref=f1e64]
+                - button "Afișează parola" [ref=f1e65]
+            - link "Ai uitat parola?" [ref=f1e72] [cursor=pointer]:
+              - /url: /realms/Akadion/login-actions/reset-credentials?client_id=backend-login&tab_id=DUagEG5FrCY&client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9sb2dpbi9vYXV0aDIvY29kZS9rZXljbG9hayIsInJ0IjoiY29kZSIsInN0IjoicGNZNlJiaHR5Q3QxRUpVTGk2Z3NtVmdNdUtrck5xdVF5eTBOdVNHOTJ0MD0ifQ
+            - button "Autentificare" [ref=f1e74]
+          - generic [ref=f1e77]:
+            - text: Nu ai un cont?
+            - link "Creează cont" [ref=f1e78] [cursor=pointer]:
+              - /url: /realms/Akadion/login-actions/registration?client_id=backend-login&tab_id=DUagEG5FrCY&client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9sb2dpbi9vYXV0aDIvY29kZS9rZXljbG9hayIsInJ0IjoiY29kZSIsInN0IjoicGNZNlJiaHR5Q3QxRUpVTGk2Z3NtVmdNdUtrck5xdVF5eTBOdVNHOTJ0MD0ifQ

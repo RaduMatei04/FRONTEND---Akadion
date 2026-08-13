@@ -1,0 +1,5 @@
+- Single frontend app rooted at `src/App.tsx`; routing handled there with `react-router-dom` and mounted from `src/main.tsx` inside `BrowserRouter` and `QueryClientProvider`.
+- Shared HTTP client lives in `src/api/client.ts`; use relative URLs only, always send credentials, forward CSRF token from `XSRF-TOKEN` cookie on non-GET requests, and rely on Vite proxy for `/api`, `/oauth2`, `/login`, `/logout` to backend on `localhost:8081`.
+- UI stack already wired: shadcn components under `src/components/ui`, helper `cn` in `src/lib/utils.ts`, global styling/theme in `src/index.css`.
+- Current project-specific screens still live directly in `App.tsx`; preserve existing `CompleteProfilePage` copy/structure/branding when adding routes.
+- Brand assets can come from `folder_inspiratie2/`; current Akadion owl logo used from there by existing pages.

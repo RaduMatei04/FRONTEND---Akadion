@@ -1,0 +1,72 @@
+- main [ref=f4e8]:
+  - generic [ref=f4e10]:
+    - link [ref=f4e11] [cursor=pointer]:
+      - /url: /
+      - img "Akadion" [ref=f4e12]
+    - navigation [ref=f4e13]:
+      - generic [ref=f4e15]:
+        - link "Acasă" [ref=f4e16] [cursor=pointer]:
+          - /url: /
+        - button "Cursuri" [ref=f4e22]
+        - link "Quiz" [ref=f4e28] [cursor=pointer]:
+          - /url: /quiz
+        - link "Flashcards" [ref=f4e33] [cursor=pointer]:
+          - /url: /flashcards
+    - button "TU TestDoi User Student" [ref=f4e39]:
+      - generic [ref=f4e40]: TU
+      - generic [ref=f4e41]:
+        - generic [ref=f4e42]: TestDoi User
+        - generic [ref=f4e43]: Student
+  - generic [ref=f4e46]:
+    - generic [ref=f4e47]:
+      - generic [ref=f4e48]:
+        - paragraph [ref=f4e49]: Student
+        - heading "Decizie si Estimare" [level=1] [ref=f4e57]
+        - paragraph [ref=f4e51]: prelucrare de semnale si matematica
+        - generic [ref=f4e61]:
+          - generic [ref=f4e62]:
+            - paragraph [ref=f4e63]: Perioadă
+            - paragraph [ref=f4e64]: 17 iul. 2026 — 30 iul. 2026
+          - generic [ref=f4e65]:
+            - paragraph [ref=f4e66]: Săptămâni
+            - paragraph [ref=f4e67]: "2"
+          - generic [ref=f4e68]:
+            - paragraph [ref=f4e69]: Profesor
+            - paragraph [ref=f4e70]: Test Prof
+      - button "Retragere" [ref=f4e72]
+    - generic [ref=f4e52]:
+      - button "Deschide cuprins curs" [ref=f4e73]
+      - generic [ref=f4e75]:
+        - button "Săptămâni" [ref=f4e76]
+        - button "Profesor" [ref=f4e77]
+      - generic [ref=f4e78]:
+        - generic [ref=f4e80]:
+          - generic [ref=f4e81]:
+            - paragraph [ref=f4e82]: Conținut curs
+            - heading "Săptămâni și documente" [level=2] [ref=f4e83]
+          - paragraph [ref=f4e84]: "Total: 2 săptămâni"
+        - generic [ref=f4e85]:
+          - generic [ref=f4e88]:
+            - button "S1 Săptămâna 1 Finalizată prima saptamana" [ref=f4e90]:
+              - generic [ref=f4e91]: S1
+              - generic [ref=f4e92]:
+                - generic [ref=f4e93]:
+                  - heading "Săptămâna 1" [level=3] [ref=f4e94]
+                  - generic [ref=f4e95]: Finalizată
+                - paragraph [ref=f4e96]: prima saptamana
+            - generic [ref=f4e97]:
+              - paragraph [ref=f4e99]: 2 documente • Finalizată
+              - button "Marchează neparcursă" [ref=f4e100]
+              - button [ref=f4e101]
+          - generic [ref=f4e104]:
+            - button "S2 Săptămâna 2 asta este saptamana 2!" [ref=f4e106]:
+              - generic [ref=f4e107]: S2
+              - generic [ref=f4e108]:
+                - heading "Săptămâna 2" [level=3] [ref=f4e110]
+                - paragraph [ref=f4e111]: asta este saptamana 2!
+            - generic [ref=f4e112]:
+              - paragraph [ref=f4e114]: 1 document • În progres
+              - button "Marchează finalizată" [ref=f4e115]
+              - button [ref=f4e116]
+      - button "Deschide Aky" [ref=f4e117]:
+        - img "Aky" [ref=f4e119]

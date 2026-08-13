@@ -1,0 +1,8 @@
+- React 19 + Vite 8, TypeScript (`type: module`).
+- Styling: Tailwind CSS v4 via `@tailwindcss/vite`, shadcn CSS import, Geist Variable font imported globally.
+- UI libs: shadcn/ui primitives, Radix UI, Lucide React.
+- Server state and forms: `@tanstack/react-query`, `@tanstack/react-form`, `zod`.
+- Networking: internal fetch wrapper in `src/api/client.ts`.
+- Routing: `react-router-dom` v7.
+- Lint: `oxlint` via `npm run lint`.
+- Build: `vite build` via `npm run build`.

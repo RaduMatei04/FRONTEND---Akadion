@@ -1,0 +1,63 @@
+- main [ref=f7e3]:
+  - generic [ref=f7e5]:
+    - link [ref=f7e6] [cursor=pointer]:
+      - /url: /
+      - img "Akadion" [ref=f7e7]
+    - navigation [ref=f7e8]:
+      - generic [ref=f7e10]:
+        - link "Acasă" [ref=f7e11] [cursor=pointer]:
+          - /url: /
+        - link "Quiz" [ref=f7e16] [cursor=pointer]:
+          - /url: /quiz
+        - link "Flashcards" [ref=f7e21] [cursor=pointer]:
+          - /url: /flashcards
+    - button "TU TestDoi User Student" [ref=f7e27]:
+      - generic [ref=f7e28]: TU
+      - generic [ref=f7e29]:
+        - generic [ref=f7e30]: TestDoi User
+        - generic [ref=f7e31]: Student
+  - generic [ref=f7e34]:
+    - generic [ref=f7e35]:
+      - generic [ref=f7e36]:
+        - paragraph [ref=f7e37]: Akadion
+        - heading "Quiz Aky" [level=1] [ref=f7e38]
+        - paragraph [ref=f7e39]: Generează, finalizează și revede quiz-uri construite din documentele tale accesibile.
+      - button "Schimbă tema paginii de quiz" [ref=f7e42]
+    - button "Deschide istoricul quiz" [ref=f7e49]
+    - generic [ref=f7e51]:
+      - generic [ref=f7e53]:
+        - generic [ref=f7e60]:
+          - paragraph [ref=f7e61]: Configurare Quiz
+          - heading "Quiz Aky" [level=2] [ref=f7e62]
+        - generic [ref=f7e63]:
+          - generic [ref=f7e64]:
+            - text: Curs
+            - combobox "Curs" [ref=f7e65]:
+              - option "Selectează cursul..." [selected]
+          - generic [ref=f7e66]:
+            - text: Document
+            - combobox "Document" [disabled] [ref=f7e67]:
+              - option "Toate documentele accesibile" [selected]
+          - generic [ref=f7e68]:
+            - text: Întrebări
+            - combobox "Întrebări" [ref=f7e69]:
+              - option "3"
+              - option "5" [selected]
+              - option "10"
+              - option "15"
+          - generic [ref=f7e70]:
+            - text: Dificultate
+            - combobox "Dificultate" [ref=f7e71]:
+              - option "Ușor"
+              - option "Mediu" [selected]
+              - option "Avansat"
+          - generic [ref=f7e72]:
+            - text: Mod
+            - combobox "Mod" [ref=f7e73]:
+              - option "Exersare" [selected]
+              - option "Examen cu timer"
+        - generic [ref=f7e74]:
+          - button "Generează quiz" [disabled]
+      - heading "Aky e gata de examen, tu?" [level=3] [ref=f7e82]
+    - button "Deschide Aky" [ref=f7e83]:
+      - img "Aky" [ref=f7e85]

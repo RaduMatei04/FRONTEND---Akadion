@@ -1,0 +1,63 @@
+- generic [ref=f2e2]:
+  - complementary [ref=f2e3]:
+    - generic [ref=f2e4]:
+      - generic "AKADION" [ref=f2e5]:
+        - generic [ref=f2e6]:
+          - img "AKADION" [ref=f2e7]
+          - generic [ref=f2e8]: Curiozitate fără limite
+      - generic [ref=f2e10]:
+        - heading "Înveți ce iubești, în ritmul tău." [level=1] [ref=f2e11]
+        - paragraph [ref=f2e12]: Aici nu ești legat de programa fixă a specializării tale — alegi cursurile care te interesează, fie din domeniul tău, fie din altele. Urmărești materialele, îți vezi progresul săptămânal și înveți din curiozitate și dorința de a descoperi lucruri noi.
+        - generic "Beneficii principale" [ref=f2e13]:
+          - generic [ref=f2e14]: Cursuri alese de tine
+          - generic [ref=f2e21]: Progres urmărit săptămânal
+          - generic [ref=f2e28]: Acces pentru studenți și profesori
+  - main [ref=f2e37]:
+    - generic [ref=f2e38]:
+      - generic "Aky AI Assistant" [ref=f2e39]:
+        - img "Aky AI" [ref=f2e41]
+        - generic [ref=f2e42]:
+          - generic [ref=f2e43]: Powered by
+          - generic [ref=f2e44]: Aky RAG
+          - generic [ref=f2e45]: Asistent pentru materiale academice
+      - generic "Pașii înregistrării" [ref=f2e46]:
+        - generic [ref=f2e47]:
+          - generic [ref=f2e48]: "1"
+          - generic [ref=f2e49]:
+            - generic [ref=f2e50]: Cont
+            - generic [ref=f2e51]: Pasul 1 curent
+        - generic [ref=f2e53]:
+          - generic [ref=f2e54]: "2"
+          - generic [ref=f2e55]:
+            - generic [ref=f2e56]: Profil
+            - generic [ref=f2e57]: Pasul 2 urmează
+      - generic [ref=f2e58]:
+        - heading "Creează cont" [level=2] [ref=f2e62]
+        - generic [ref=f2e63]:
+          - paragraph [ref=f2e68]: Contul va necesita aprobarea unui administrator.
+          - generic [ref=f2e69]:
+            - generic [ref=f2e70]:
+              - generic [ref=f2e71]:
+                - generic [ref=f2e72]:
+                  - generic [ref=f2e73]: Email
+                  - generic [ref=f2e74]: "*"
+                - textbox "Email" [ref=f2e77]
+              - generic [ref=f2e78]:
+                - generic [ref=f2e79]:
+                  - generic [ref=f2e80]: Parola
+                  - generic [ref=f2e81]: "*"
+                - generic [ref=f2e83]:
+                  - textbox "Parola" [ref=f2e84]
+                  - button "Afișează parola" [ref=f2e85]
+              - generic [ref=f2e89]:
+                - generic [ref=f2e90]:
+                  - generic [ref=f2e91]: Confirmare parolă
+                  - generic [ref=f2e92]: "*"
+                - generic [ref=f2e94]:
+                  - textbox "Confirmare parolă" [ref=f2e95]
+                  - button "Afișează parola" [ref=f2e96]
+            - button "Creează cont" [ref=f2e102]
+            - paragraph [ref=f2e103]:
+              - text: Ai deja un cont?
+              - link "Autentifică-te" [ref=f2e104] [cursor=pointer]:
+                - /url: /realms/Akadion/login-actions/authenticate?client_id=backend-login&tab_id=DUagEG5FrCY&client_data=eyJydSI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9sb2dpbi9vYXV0aDIvY29kZS9rZXljbG9hayIsInJ0IjoiY29kZSIsInN0IjoicGNZNlJiaHR5Q3QxRUpVTGk2Z3NtVmdNdUtrck5xdVF5eTBOdVNHOTJ0MD0ifQ
