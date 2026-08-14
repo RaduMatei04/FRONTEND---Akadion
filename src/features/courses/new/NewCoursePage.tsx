@@ -1,6 +1,5 @@
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
-import { z } from "zod"
 import { useState } from "react"
 import { AlertCircle, BookPlus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
@@ -12,14 +11,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createProfessorCourse, getCourseErrorMessage, getCourseFieldErrors } from "@/features/courses/api/courses"
+import { newCourseSchema } from "@/features/courses/course.schemas"
 
 import type { AppAxiosError, FieldErrors } from "@/types/api"
-
-const newCourseSchema = z.object({
-  denumire: z.string().trim().min(1, "Denumirea cursului este obligatorie."),
-  descriere: z.string(),
-  dataInceput: z.string().min(1, "Data de început este obligatorie."),
-})
 
 function getTodayInputValue() {
   return new Date().toISOString().slice(0, 10)

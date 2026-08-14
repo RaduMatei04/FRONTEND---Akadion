@@ -2,8 +2,7 @@ import { ChevronDown, FileText, X } from "lucide-react"
 import { cn, formatWeeks } from "@/lib/utils"
 
 import type { CourseTheme } from "@/types/theme"
-
-type EntityId = string | number
+import type { EntityId } from "@/types/api"
 
 interface WeekRecord {
   id: EntityId

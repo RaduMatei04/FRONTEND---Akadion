@@ -2,11 +2,7 @@ import { Sparkles } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
 import type { CourseTheme } from "@/types/theme"
-
-interface CourseOption {
-  id?: string | number
-  denumire?: string
-}
+import type { CourseOption } from "@/types/course"
 
 interface AkyCourseSelectViewProps {
   selectedTheme: CourseTheme

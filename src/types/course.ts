@@ -1,3 +1,4 @@
+import type { EntityId } from "@/types/api"
 import type { AuthUser } from "@/types/user"
 
 export interface Course {
@@ -15,6 +16,12 @@ export interface Course {
   nrSaptamaniCurente?: number
   nrSaptamaniFinalizate?: number
   procentajProgres?: number
+  [key: string]: unknown
+}
+
+export interface CourseOption {
+  id?: EntityId
+  denumire?: string
   [key: string]: unknown
 }
 

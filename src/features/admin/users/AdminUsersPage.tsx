@@ -13,6 +13,7 @@ import AdminUsersList from "@/features/admin/users/components/AdminUsersList"
 
 import type { AppAxiosError } from "@/types/api"
 import type { AdminManagedUser, UserState } from "@/types/app"
+import { formatDateTime } from "@/lib/date"
 
 const ADMIN_USERS_PER_PAGE = 5
 const ADMIN_USERS_QUERY_KEY = ["admin", "users", "all"] as const
@@ -39,23 +40,6 @@ async function runAdminUserAction({ userId, action }: { userId: string | number;
   }
 
   await apiClient.post(`/api/admin/users/${userId}/${action}`)
-}
-
-function formatDateTime(value: unknown) {
-  if (!value) {
-    return "-"
-  }
-
-  const dateValue = typeof value === "string" || typeof value === "number" || value instanceof Date ? value : ""
-  const date = new Date(dateValue)
-  if (Number.isNaN(date.getTime())) {
-    return "-"
-  }
-
-  return new Intl.DateTimeFormat("ro-RO", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date)
 }
 
 export default function AdminUsersPage() {

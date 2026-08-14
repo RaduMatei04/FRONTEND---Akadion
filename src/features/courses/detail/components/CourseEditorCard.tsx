@@ -1,21 +1,19 @@
+import { useEffect } from "react"
+import { useForm } from "@tanstack/react-form"
 import { ChevronDown, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { newCourseSchema } from "@/features/courses/course.schemas"
 
+import type { CourseForm } from "../course-detail.types"
 import type { FieldErrors } from "@/types/api"
 import type { CourseTheme } from "@/types/theme"
 
 interface CourseRecord {
   activ?: boolean
-}
-
-interface CourseForm {
-  denumire: string
-  descriere: string
-  dataInceput: string
 }
 
 interface CourseEditorCardProps {
@@ -26,8 +24,8 @@ interface CourseEditorCardProps {
   fieldErrors: FieldErrors
   activeAction: string
   theme: CourseTheme
-  updateCourseField: (field: keyof CourseForm, value: string) => void
-  handleSaveCourse: (event: React.FormEvent<HTMLFormElement>) => void
+  clearFieldError: (field: keyof CourseForm) => void
+  onSaveCourse: (values: CourseForm) => Promise<void>
 }
 
 export default function CourseEditorCard({
@@ -38,9 +36,25 @@ export default function CourseEditorCard({
   fieldErrors,
   activeAction,
   theme,
-  updateCourseField,
-  handleSaveCourse,
+  clearFieldError,
+  onSaveCourse,
 }: CourseEditorCardProps) {
+  const form = useForm({
+    defaultValues: courseForm,
+    validators: {
+      onChange: newCourseSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await onSaveCourse(value)
+    },
+  })
+
+  useEffect(() => {
+    form.setFieldValue("denumire", courseForm.denumire)
+    form.setFieldValue("dataInceput", courseForm.dataInceput)
+    form.setFieldValue("descriere", courseForm.descriere)
+  }, [form, courseForm])
+
   return (
     <Card className="gap-0 overflow-hidden rounded-[1.75rem] border-[#e4d8cd] bg-white/92 py-0 shadow-[0_18px_48px_rgba(32,46,84,0.08)]">
       <button
@@ -65,23 +79,77 @@ export default function CourseEditorCard({
 
       {courseEditorOpen ? (
         <CardContent className="border-t border-[#eadfd4] px-5 py-5 sm:px-6 sm:py-6">
-          <form className="grid gap-5 lg:grid-cols-[1fr_220px]" onSubmit={handleSaveCourse}>
+          <form
+            className="grid gap-5 lg:grid-cols-[1fr_220px]"
+            onSubmit={(event) => {
+              event.preventDefault()
+              void form.handleSubmit()
+            }}
+          >
             <div className="space-y-2.5">
               <Label htmlFor="course-name" className="text-[0.8rem] font-semibold tracking-[0.16em] text-slate-600">DENUMIRE *</Label>
-              <Input id="course-name" value={courseForm.denumire} onChange={(event) => updateCourseField("denumire", event.target.value)} className="h-13 rounded-2xl border-[#e4d8cd] bg-[#f7efe6] px-4 text-base shadow-none focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10" />
-              {fieldErrors.denumire ? <p className="text-sm text-rose-600">{fieldErrors.denumire}</p> : null}
+              <form.Field name="denumire">
+                {(field) => (
+                  <>
+                    <Input
+                      id="course-name"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => {
+                        field.handleChange(event.target.value)
+                        clearFieldError("denumire")
+                      }}
+                      className="h-13 rounded-2xl border-[#e4d8cd] bg-[#f7efe6] px-4 text-base shadow-none focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10"
+                    />
+                    {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
+                    {fieldErrors.denumire ? <p className="text-sm text-rose-600">{fieldErrors.denumire}</p> : null}
+                  </>
+                )}
+              </form.Field>
             </div>
 
             <div className="space-y-2.5">
               <Label htmlFor="course-start" className="text-[0.8rem] font-semibold tracking-[0.16em] text-slate-600">DATA ÎNCEPUT *</Label>
-              <Input id="course-start" type="date" value={courseForm.dataInceput} onChange={(event) => updateCourseField("dataInceput", event.target.value)} className="h-13 rounded-2xl border-[#e4d8cd] bg-[#f7efe6] px-4 text-base shadow-none focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10" />
-              {fieldErrors.dataInceput ? <p className="text-sm text-rose-600">{fieldErrors.dataInceput}</p> : null}
+              <form.Field name="dataInceput">
+                {(field) => (
+                  <>
+                    <Input
+                      id="course-start"
+                      type="date"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => {
+                        field.handleChange(event.target.value)
+                        clearFieldError("dataInceput")
+                      }}
+                      className="h-13 rounded-2xl border-[#e4d8cd] bg-[#f7efe6] px-4 text-base shadow-none focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10"
+                    />
+                    {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
+                    {fieldErrors.dataInceput ? <p className="text-sm text-rose-600">{fieldErrors.dataInceput}</p> : null}
+                  </>
+                )}
+              </form.Field>
             </div>
 
             <div className="space-y-2.5 lg:col-span-2">
               <Label htmlFor="course-description" className="text-[0.8rem] font-semibold tracking-[0.16em] text-slate-600">DESCRIERE</Label>
-              <textarea id="course-description" value={courseForm.descriere} onChange={(event) => updateCourseField("descriere", event.target.value)} className="min-h-28 w-full rounded-2xl border border-[#e4d8cd] bg-[#f7efe6] px-4 py-3 text-base text-slate-900 outline-none focus:border-[#24385b] focus:ring-2 focus:ring-[#24385b]/10" />
-              {fieldErrors.descriere ? <p className="text-sm text-rose-600">{fieldErrors.descriere}</p> : null}
+              <form.Field name="descriere">
+                {(field) => (
+                  <>
+                    <textarea
+                      id="course-description"
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(event) => {
+                        field.handleChange(event.target.value)
+                        clearFieldError("descriere")
+                      }}
+                      className="min-h-28 w-full rounded-2xl border border-[#e4d8cd] bg-[#f7efe6] px-4 py-3 text-base text-slate-900 outline-none focus:border-[#24385b] focus:ring-2 focus:ring-[#24385b]/10"
+                    />
+                    {fieldErrors.descriere ? <p className="text-sm text-rose-600">{fieldErrors.descriere}</p> : null}
+                  </>
+                )}
+              </form.Field>
             </div>
 
             <div className="flex flex-wrap gap-2 lg:col-span-2">

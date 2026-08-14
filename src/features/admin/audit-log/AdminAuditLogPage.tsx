@@ -9,6 +9,7 @@ import AppShell from "@/app/layout/AppShell"
 import { useAuth } from "@/auth/useAuth"
 
 import type { AppAxiosError } from "@/types/api"
+import { formatDateTimeParts } from "@/lib/date"
 
 const limitOptions = [10, 20, 50]
 
@@ -90,29 +91,6 @@ function getActionBadgeClass(action) {
   }
 
   return "border-indigo-200 bg-indigo-50 text-indigo-700"
-}
-
-function formatDateTime(value) {
-  if (!value) return "-"
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return "-"
-  return new Intl.DateTimeFormat("ro-RO", {
-    dateStyle: "medium",
-    timeStyle: "medium",
-  }).format(date)
-}
-
-function formatDateTimeParts(value) {
-  const formatted = formatDateTime(value)
-  if (formatted === "-" || !formatted.includes(",")) {
-    return { date: formatted, time: "" }
-  }
-
-  const [datePart, timePart] = formatted.split(",")
-  return {
-    date: datePart.trim(),
-    time: timePart.trim(),
-  }
 }
 
 function JsonFormatter({ data }: { data?: Record<string, unknown> | null }) {
@@ -237,7 +215,7 @@ export default function AdminAuditLogPage() {
                   </thead>
                   <tbody className="divide-y divide-[#e4d8cd]">
                     {logs.map((log) => {
-                      const { date, time } = formatDateTimeParts(log.creatLa)
+                      const { date, time } = formatDateTimeParts(log.creatLa, "medium")
 
                       return (
                       <tr key={log.id} className="transition-colors hover:bg-[#fcfaf8]">

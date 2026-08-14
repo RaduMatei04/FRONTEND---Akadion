@@ -5,16 +5,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 import type { CourseTheme } from "@/types/theme"
-
-interface CourseOption {
-  id?: string | number
-  denumire?: string
-}
-
-interface AccessibleDocument {
-  documentId?: string | number
-  numeFisier?: string
-}
+import type { CourseOption } from "@/types/course"
+import type { AccessibleDocument } from "@/features/study-tools/quiz/quiz.types"
 
 interface FlashcardsConfigurationCardProps {
   theme: CourseTheme

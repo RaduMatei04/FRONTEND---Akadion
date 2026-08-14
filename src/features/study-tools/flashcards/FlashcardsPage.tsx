@@ -15,19 +15,10 @@ import { isStudentUser } from "@/lib/user"
 import { cn } from "@/lib/utils"
 
 import type { AppAxiosError } from "@/types/api"
+import type { CourseOption } from "@/types/course"
+import type { AccessibleDocument } from "@/features/study-tools/quiz/quiz.types"
 import type { Flashcard } from "@/types/quiz"
 const FLASHCARDS_COURSES_QUERY_KEY = ["flashcards", "courses"] as const
-
-interface CourseOption {
-  id?: string | number
-  denumire?: string
-}
-
-interface AccessibleDocument {
-  documentId?: string | number
-  numeFisier?: string
-  [key: string]: unknown
-}
 
 interface FlashcardRecord extends Flashcard {
   fata?: string

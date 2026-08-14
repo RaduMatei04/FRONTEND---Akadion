@@ -1,7 +1,4 @@
-export interface CourseOption {
-  id?: string | number
-  denumire?: string
-}
+export type { CourseOption } from "@/types/course"
 
 export interface AccessibleDocument {
   documentId?: string | number

@@ -15,7 +15,7 @@ export interface CourseCardProps {
   mode: "professor" | "admin" | "student"
   selectedThemeKey: string
   onThemeChange: (courseId: string | number, themeKey: string) => void
-  onEnroll: (course: Course) => void
+  onEnroll?: (course: Course) => void
   actionDisabled: boolean
 }
 
@@ -142,11 +142,11 @@ export default function CourseCard({ course, mode, selectedThemeKey, onThemeChan
             <Button asChild variant="outline" className="mt-2 rounded-2xl border-[#d9ccbe] bg-white text-[#3f698a]">
               <Link to={`/courses/${course.id}`} state={{ course }}>Vezi cursul</Link>
             </Button>
-          ) : (
+          ) : onEnroll ? (
             <Button type="button" onClick={() => onEnroll(course)} disabled={actionDisabled} className="mt-2 rounded-2xl bg-[#3f698a] text-white hover:bg-[#355b79]">
               Înscriere
             </Button>
-          )
+          ) : null
         ) : null}
       </CardContent>
       <div ref={themePickerRef} className="absolute right-4 bottom-4 z-30">

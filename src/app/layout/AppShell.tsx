@@ -6,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { startLogout } from "@/auth/logout"
 import { useAuth } from "@/auth/useAuth"
-import { getRoleLabel, getUserDisplayName, isAdminUser } from "@/lib/user"
+import { getInitials, getRoleLabel, getUserDisplayName, isAdminUser } from "@/lib/user"
 import { cn } from "@/lib/utils"
 
 const completeProfileLogo = "/logo_bufnita_transparenta.png"
@@ -28,16 +28,6 @@ interface AppShellProps {
   shellClassName?: string
   hideHeader?: boolean
   contentSectionClassName?: string
-}
-
-function getInitials(displayName: string) {
-  return displayName
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase() || "A"
 }
 
 export default function AppShell({ title, description, eyebrow = "Akadion", actions, children, heroClassName, heroEyebrowClassName, heroTitleClassName, heroDescriptionClassName, heroContent, heroVisual, heroVisualClassName, sideContent, shellClassName, hideHeader = false, contentSectionClassName }: AppShellProps) {

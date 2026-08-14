@@ -77,6 +77,17 @@ export function getUserDisplayName(user: AuthUser | null | undefined) {
   return [user?.prenume, user?.nume].filter(Boolean).join(" ") || user?.mail || "Utilizator"
 }
 
+export function getInitials(value: unknown, fallback = "A") {
+  const initials = String(value || "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("")
+
+  return initials || fallback
+}
+
 export function getUserGreetingName(user: AuthUser | null | undefined) {
   return [user?.prenume, user?.nume].filter(Boolean).join(" ") || user?.displayName || user?.mail || "Utilizator"
 }

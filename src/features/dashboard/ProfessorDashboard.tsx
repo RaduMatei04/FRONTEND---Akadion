@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import { AlertCircle, Plus } from "lucide-react"
@@ -31,9 +32,13 @@ export default function ProfessorDashboard() {
   const { courseThemes, setCourseTheme } = useCourseThemePreferences(user, courses.map((course) => course.id))
 
   const typedError = queryError as AppAxiosError | null
-  if (typedError?.response?.status === 401) {
-    void refreshAuth()
-  }
+  const hasSessionExpired = typedError?.response?.status === 401
+
+  useEffect(() => {
+    if (hasSessionExpired) {
+      void refreshAuth()
+    }
+  }, [hasSessionExpired, refreshAuth])
 
   const error = queryError ? getCourseErrorMessage(queryError, "Nu am putut încărca cursurile tale.") : ""
 
@@ -77,7 +82,7 @@ export default function ProfessorDashboard() {
                 {activeCourses.length > 0 ? (
                   <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
                     {activeCourses.map((course) => (
-                      <CourseCard key={course.id} course={course} mode="professor" selectedThemeKey={courseThemes[course.id] ?? DEFAULT_COURSE_THEME} onThemeChange={setCourseTheme} onEnroll={() => {}} actionDisabled={false} />
+                      <CourseCard key={course.id} course={course} mode="professor" selectedThemeKey={courseThemes[course.id] ?? DEFAULT_COURSE_THEME} onThemeChange={setCourseTheme} actionDisabled={false} />
                     ))}
                   </div>
                 ) : (
@@ -90,7 +95,7 @@ export default function ProfessorDashboard() {
                 {inactiveCourses.length > 0 ? (
                   <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
                     {inactiveCourses.map((course) => (
-                      <CourseCard key={course.id} course={course} mode="professor" selectedThemeKey={courseThemes[course.id] ?? DEFAULT_COURSE_THEME} onThemeChange={setCourseTheme} onEnroll={() => {}} actionDisabled={false} />
+                      <CourseCard key={course.id} course={course} mode="professor" selectedThemeKey={courseThemes[course.id] ?? DEFAULT_COURSE_THEME} onThemeChange={setCourseTheme} actionDisabled={false} />
                     ))}
                   </div>
                 ) : (

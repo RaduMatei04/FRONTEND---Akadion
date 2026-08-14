@@ -4,14 +4,7 @@ import { cn } from "@/lib/utils"
 
 import type { MouseEvent, UIEvent } from "react"
 import type { CourseTheme } from "@/types/theme"
-
-type EntityId = string | number
-type FilterMode = "course" | "all"
-
-interface CourseOption {
-  id?: EntityId
-  denumire?: string
-}
+import type { CourseOption, EntityId, FilterMode } from "../aky-chat.types"
 
 interface ConversationRecord {
   id?: EntityId
@@ -28,8 +21,7 @@ interface AkyConversationListPaneProps {
   handleScrollConversations: (event: UIEvent<HTMLDivElement>) => void
   courseId: EntityId | null
   filterMode: FilterMode
-  setFilterMode: (value: FilterMode) => void
-  fetchConversations: (pageToLoad?: number, append?: boolean, overrideFilter?: FilterMode | null) => Promise<void>
+  onFilterChange: (filterMode: FilterMode) => void
   isLoadingConversations: boolean
   conversatii: ConversationRecord[]
   courses: CourseOption[]
@@ -38,7 +30,7 @@ interface AkyConversationListPaneProps {
   handleDeleteConversation: (convId: EntityId | null | undefined, e: MouseEvent<HTMLButtonElement>) => Promise<void>
   hasMoreConversations: boolean
   isLoadingMoreConversations: boolean
-  convPage: number
+  fetchNextPage: () => void
 }
 
 export default function AkyConversationListPane(props: AkyConversationListPaneProps) {
@@ -50,8 +42,7 @@ export default function AkyConversationListPane(props: AkyConversationListPanePr
     handleScrollConversations,
     courseId,
     filterMode,
-    setFilterMode,
-    fetchConversations,
+    onFilterChange,
     isLoadingConversations,
     conversatii,
     courses,
@@ -60,7 +51,7 @@ export default function AkyConversationListPane(props: AkyConversationListPanePr
     handleDeleteConversation,
     hasMoreConversations,
     isLoadingMoreConversations,
-    convPage,
+    fetchNextPage,
   } = props
 
   return (
@@ -88,8 +79,8 @@ export default function AkyConversationListPane(props: AkyConversationListPanePr
           <h3 className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Istoric Conversații</h3>
           {courseId ? (
             <div className="flex gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200/60">
-              <button type="button" onClick={() => { setFilterMode("course"); void fetchConversations(0, false, "course") }} className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all ${filterMode === "course" ? "bg-white text-[#1e3a5f] shadow-xs" : "text-slate-500 hover:text-slate-800"}`}>Acest curs</button>
-              <button type="button" onClick={() => { setFilterMode("all"); void fetchConversations(0, false, "all") }} className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all ${filterMode === "all" ? "bg-white text-[#1e3a5f] shadow-xs" : "text-slate-500 hover:text-slate-800"}`}>Toate</button>
+              <button type="button" onClick={() => onFilterChange("course")} className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all ${filterMode === "course" ? "bg-white text-[#1e3a5f] shadow-xs" : "text-slate-500 hover:text-slate-800"}`}>Acest curs</button>
+              <button type="button" onClick={() => onFilterChange("all")} className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all ${filterMode === "all" ? "bg-white text-[#1e3a5f] shadow-xs" : "text-slate-500 hover:text-slate-800"}`}>Toate</button>
             </div>
           ) : null}
         </div>
@@ -130,7 +121,7 @@ export default function AkyConversationListPane(props: AkyConversationListPanePr
 
         {hasMoreConversations ? (
           <div className="pt-3 pb-2 text-center">
-            <Button type="button" variant="outline" size="sm" onClick={() => void fetchConversations(convPage + 1, true)} disabled={isLoadingMoreConversations} className="rounded-xl border-[#d9e4f4] text-xs font-semibold text-[#24385b] hover:bg-[#f4f8fd]">
+            <Button type="button" variant="outline" size="sm" onClick={fetchNextPage} disabled={isLoadingMoreConversations} className="rounded-xl border-[#d9e4f4] text-xs font-semibold text-[#24385b] hover:bg-[#f4f8fd]">
               {isLoadingMoreConversations ? <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />Se încarcă mai multe conversații...</> : "Încarcă mai multe conversații"}
             </Button>
           </div>

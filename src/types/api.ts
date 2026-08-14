@@ -1,5 +1,7 @@
 export type FieldErrors = Record<string, string>
 
+export type EntityId = string | number
+
 export interface ApiErrorBody {
   message?: string
   eroare?: string

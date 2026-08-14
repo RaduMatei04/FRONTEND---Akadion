@@ -2,11 +2,9 @@ import { BookOpenText, ChevronDown, FileText, History, Home, Sparkles, Users } f
 import { useEffect, useRef, useState } from "react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/auth/useAuth"
-import { listProfessorCourses, listStudentCourses } from "@/features/courses/api/courses"
-import { isAdminUser, isProfessorUser, isStudentUser } from "@/lib/user"
+import { useMyCoursesQuery } from "@/features/courses/hooks/useMyCoursesQuery"
+import { isAdminUser, isStudentUser } from "@/lib/user"
 import { cn } from "@/lib/utils"
-
-import type { Course } from "@/types/course"
 
 interface CourseTabsNavProps {
   onNavClick?: () => void
@@ -14,39 +12,12 @@ interface CourseTabsNavProps {
 
 export default function CourseTabsNav({ onNavClick }: CourseTabsNavProps) {
   const { user } = useAuth()
-  const [courses, setCourses] = useState<Course[]>([])
+  const { data: courses = [] } = useMyCoursesQuery()
   const [coursesOpen, setCoursesOpen] = useState(false)
   const coursesMenuRef = useRef<HTMLDivElement | null>(null)
   const location = useLocation()
-  const isProf = isProfessorUser(user)
   const isAdmin = isAdminUser(user)
   const isStudent = isStudentUser(user)
-
-  useEffect(() => {
-    let mounted = true
-
-    async function fetchUserCourses() {
-      if (isAdmin || (!isProf && !isStudent)) {
-        setCourses([])
-        return
-      }
-
-      try {
-        const data = isProf ? await listProfessorCourses() : await listStudentCourses()
-        if (mounted && Array.isArray(data)) {
-          setCourses(data)
-        }
-      } catch {
-        // Navigation should still render even if the course list fails.
-      }
-    }
-
-    void fetchUserCourses()
-
-    return () => {
-      mounted = false
-    }
-  }, [isAdmin, isProf, isStudent])
 
   useEffect(() => {
     if (!coursesOpen) {

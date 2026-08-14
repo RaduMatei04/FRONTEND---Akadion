@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
 import type { FieldErrors } from "@/types/api"
+import type { EmailForm } from "@/features/profile/profile.types"
 
 interface SecurityCardProps {
-  emailForm: any
+  emailForm: EmailForm
   emailErrors: FieldErrors
   emailError: string
   emailChanged: boolean
@@ -45,7 +46,7 @@ export default function SecurityCard({
             <Label htmlFor="profile-email" className="text-xs font-bold uppercase tracking-wider text-slate-600">Adresă email</Label>
             <div className="flex flex-col gap-3 sm:flex-row">
               <emailForm.Field name="email">
-                {(field: any) => (
+                {(field) => (
                   <Input
                     id="profile-email"
                     type="email"

@@ -1,348 +1,131 @@
-import { AlertCircle, Check, ChevronLeft, FileText, GripVertical, Loader2, Palette, PanelLeftOpen, Sparkles, RotateCcw } from "lucide-react"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
-import { type CSSProperties, type FormEvent, type MouseEvent, type PointerEvent as ReactPointerEvent, type UIEvent, useCallback, useEffect, useRef, useState } from "react"
+import { useInfiniteQuery, useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query"
+import { useCallback, useEffect, useState, type MouseEvent, type UIEvent } from "react"
+
 import { useAuth } from "@/auth/useAuth"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import AkyComposer from "@/features/aky-chat/components/AkyComposer"
-import AkyConversationListPane from "@/features/aky-chat/components/AkyConversationListPane"
-import AkyCourseSelectView from "@/features/aky-chat/components/AkyCourseSelectView"
-import { adaugaMesaj, creareConversatieSiMesaj, getConversatii, getConversatiiGlobale, getIstoric, retryMesaj, stergeConversatie } from "@/features/study-tools/api/studyTools"
-import { COURSE_THEME_KEYS, COURSE_THEMES, DEFAULT_COURSE_THEME, getCourseTheme, getThemeUserKey } from "@/lib/courseThemes"
-import { listProfessorCourses, listStudentCourses } from "@/features/courses/api/courses"
-import { isAdminUser, isProfessorUser, isStudentUser } from "@/lib/user"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { useMyCoursesQuery } from "@/features/courses/hooks/useMyCoursesQuery"
+import { getConversatii, getConversatiiGlobale, stergeConversatie } from "@/features/study-tools/api/studyTools"
+import { isAdminUser } from "@/lib/user"
 import { cn } from "@/lib/utils"
+import type { PaginatedResponse } from "@/types/api"
 
-import type { AppAxiosError, PaginatedResponse } from "@/types/api"
-import type { AkyMessage, Conversatie } from "@/types/chat"
-import type { Course } from "@/types/course"
-import type { CourseTheme } from "@/types/theme"
-import type { AuthUser } from "@/types/user"
+import AkyChatHeader from "./components/AkyChatHeader"
+import AkyChatPanel from "./components/AkyChatPanel"
+import AkyConversationListPane from "./components/AkyConversationListPane"
+import AkyResizeHandle from "./components/AkyResizeHandle"
+import { useAkyMessages } from "./hooks/useAkyMessages"
+import { useAkyResizableLayout } from "./hooks/useAkyResizableLayout"
+import { useAkyThemePreference } from "./hooks/useAkyThemePreference"
+import { AKY_CONVERSATIONS_QUERY_KEY, AKY_PANEL_MIN_WIDTH, ragLogo } from "./aky-chat.constants"
+import { formatDate } from "./aky-chat.utils"
+import type { AkyChatWidgetProps, ChatView, ConversationRecord, ConversationsPage, EntityId, FilterMode } from "./aky-chat.types"
 
-const ragHeadLogo = "/assets/logo_RAG_head.png"
-const ragLogo = "/assets/logo_RAG-removebg-preview.png"
-
-const QUICK_QUESTIONS = [
-  "Ce materiale sunt disponibile la acest curs?",
-  "Cum sunt structurate săptămânile de curs?",
-  "Care este tematica principală a cursului?",
-]
-
-const AKY_THEME_STORAGE_PREFIX = "akadion:aky-theme"
-const AKY_PANEL_MIN_WIDTH = 800
-const AKY_PANEL_DEFAULT_WIDTH = AKY_PANEL_MIN_WIDTH
-const AKY_PANEL_MAX_WIDTH = 1344
-const AKY_PANEL_VIEWPORT_GAP = 32
-const AKY_HISTORY_MIN_WIDTH = 260
-const AKY_HISTORY_DEFAULT_WIDTH = 320
-const AKY_HISTORY_MAX_WIDTH = 430
-const AKY_CHAT_MIN_WIDTH = 380
-const AKY_COURSES_QUERY_KEY = ["aky", "courses"] as const
-
-type ChatView = "list" | "chat"
-type FilterMode = "course" | "all"
-type EntityId = string | number
-type AkyPanelStyle = CSSProperties & Record<"--aky-panel-width" | "--aky-history-width", string>
-
-interface AkyChatWidgetProps {
-  courseId?: EntityId | null
-  courseTitle?: string | null
-  enabled?: boolean
+interface NormalizedConversationsPage {
+  items: ConversationRecord[]
+  hasMore: boolean
+  page: number
 }
 
-interface CourseOption extends Course {
-  id?: EntityId
-  denumire?: string
+function normalizeConversationsPage(response: PaginatedResponse<ConversationRecord> | ConversationRecord[], page: number): NormalizedConversationsPage {
+  if (Array.isArray(response)) return { items: response, hasMore: false, page }
+  return { items: response.continut ?? [], hasMore: (response as ConversationsPage).areUrmatoarea ?? false, page }
 }
 
-interface ConversationRecord extends Conversatie {
-  id?: EntityId
-  cursId?: EntityId | null
-  titlu?: string
-  createdAt?: string
-}
-
-interface MessageRecord extends AkyMessage {
-  id?: EntityId
-  rol?: string
-  continut?: string
-  createdAt?: string
-  surseFolosite?: string
-  areRaspuns?: boolean
-}
-
-interface ConversationsPage extends PaginatedResponse<ConversationRecord> {
-  areUrmatoarea?: boolean
-}
-
-interface HistoryPage extends PaginatedResponse<MessageRecord> {
-  mesaje?: MessageRecord[]
-  areMaiMulte?: boolean
-  celMaiVechiIdIncarcat?: EntityId | null
-}
-
-interface NewConversationResponse {
-  conversatieId?: EntityId
-  [key: string]: unknown
-}
-
-function getAkyThemeStorageKey(user: AuthUser | null | undefined) {
-  return `${AKY_THEME_STORAGE_PREFIX}:${getThemeUserKey(user)}`
-}
-
-function normalizeHistoryResponse(response: MessageRecord[] | HistoryPage) {
-  if (Array.isArray(response)) {
-    return {
-      items: response,
-      hasMore: false,
-      oldestLoadedMessageId: null,
-    }
-  }
-
-  return {
-    items: response?.mesaje || response?.continut || [],
-    hasMore: response?.areMaiMulte ?? false,
-    oldestLoadedMessageId: response?.celMaiVechiIdIncarcat ?? null,
-  }
+function getConversationsQueryKey(courseId: EntityId | null, filterMode: FilterMode) {
+  return [...AKY_CONVERSATIONS_QUERY_KEY, courseId ?? "global", filterMode]
 }
 
 export default function AkyChatWidget({ courseId = null, courseTitle = null, enabled = true }: AkyChatWidgetProps) {
   const { user } = useAuth()
-  const [open, setOpen] = useState(false)
-  const [panelWidth, setPanelWidth] = useState(AKY_PANEL_DEFAULT_WIDTH)
-  const [historyWidth, setHistoryWidth] = useState(AKY_HISTORY_DEFAULT_WIDTH)
-  const [historyVisible, setHistoryVisible] = useState(true)
-  const [themePickerOpen, setThemePickerOpen] = useState(false)
   const isAdmin = isAdminUser(user)
-  const isStudent = isStudentUser(user)
-  const isProfessor = isProfessorUser(user)
 
+  const [open, setOpen] = useState(false)
   const [selectedCourseId, setSelectedCourseId] = useState<EntityId | null>(courseId)
-
-  // Theme state
-  const [selectedThemeKey, setSelectedThemeKey] = useState(DEFAULT_COURSE_THEME)
-  const selectedTheme: CourseTheme = getCourseTheme(selectedThemeKey)
-
-  // Chat & History state
-  const [conversatii, setConversatii] = useState<ConversationRecord[]>([])
-  const [convPage, setConvPage] = useState(0)
-  const [hasMoreConversations, setHasMoreConversations] = useState(false)
-  const [isLoadingMoreConversations, setIsLoadingMoreConversations] = useState(false)
-
-  const [view, setView] = useState<ChatView>("list") // "list" | "chat"
   const [selectedConversationId, setSelectedConversationId] = useState<EntityId | null>(null)
+  const [view, setView] = useState<ChatView>("list")
+  const [filterMode, setFilterMode] = useState<FilterMode>("course")
 
-  const [messages, setMessages] = useState<MessageRecord[]>([])
-  const [hasMoreMessages, setHasMoreMessages] = useState(false)
-  const [oldestLoadedMessageId, setOldestLoadedMessageId] = useState<EntityId | null>(null)
-  const [isLoadingOlderMessages, setIsLoadingOlderMessages] = useState(false)
+  const { selectedTheme, themePickerOpen, setThemePickerOpen, themePickerRef, handleThemeChange } = useAkyThemePreference(user)
+  const { setPanelWidth, historyVisible, setHistoryVisible, isResizing, handlePanelResizePointerDown, handleHistoryResizePointerDown, panelStyle } =
+    useAkyResizableLayout(open)
 
-  const [draft, setDraft] = useState("")
-  const [isSending, setIsSending] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [isLoadingConversations, setIsLoadingConversations] = useState(false)
-  const [isLoadingMessages, setIsLoadingMessages] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement | null>(null)
+  const queryClient = useQueryClient()
 
-  const [filterMode, setFilterMode] = useState<FilterMode>("course") // "course" | "all"
-  const filterModeRef = useRef<FilterMode>(filterMode)
-  const isResizingPanelRef = useRef(false)
-  const isResizingHistoryRef = useRef(false)
-  const themePickerRef = useRef<HTMLDivElement | null>(null)
-
-  const [isResizing, setIsResizing] = useState(false)
-
-  const coursesQuery = useQuery<CourseOption[]>({
-    queryKey: AKY_COURSES_QUERY_KEY,
-    enabled: open && !courseId && (isStudent || isProfessor),
-    queryFn: async () => {
-      const nextCourses = isStudent ? await listStudentCourses() : await listProfessorCourses()
-      return nextCourses.map((course) => ({ id: course.id, denumire: course.denumire }))
-    },
-  })
+  const coursesQuery = useMyCoursesQuery(open && !courseId)
   const courses = coursesQuery.data ?? []
   const activeCourseTitle = courseTitle || courses.find((course) => String(course.id) === String(selectedCourseId))?.denumire
 
-  const sendMessageMutation = useMutation({
-    mutationFn: ({ conversationId, activeCourseId, questionText }: { conversationId: EntityId | null; activeCourseId: EntityId; questionText: string }) => {
-      if (!conversationId) {
-        return creareConversatieSiMesaj(activeCourseId, questionText)
-      }
-
-      return adaugaMesaj(conversationId, questionText)
+  const conversationsQuery = useInfiniteQuery({
+    queryKey: getConversationsQueryKey(courseId, filterMode),
+    enabled: open && !isAdmin,
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }) => {
+      const response = filterMode === "course" && courseId ? await getConversatii(courseId, pageParam) : await getConversatiiGlobale(pageParam)
+      return normalizeConversationsPage(response, pageParam)
     },
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.page + 1 : undefined),
   })
 
-  const retryMessageMutation = useMutation({
-    mutationFn: retryMesaj,
+  const conversatii = conversationsQuery.data?.pages.flatMap((page) => page.items) ?? []
+  const hasMoreConversations = conversationsQuery.hasNextPage ?? false
+  const isLoadingConversations = conversationsQuery.isPending
+  const isLoadingMoreConversations = conversationsQuery.isFetchingNextPage
+
+  const handleNewConversationId = useCallback(
+    (conversationId: EntityId) => {
+      setSelectedConversationId(conversationId)
+      void queryClient.invalidateQueries({ queryKey: AKY_CONVERSATIONS_QUERY_KEY })
+    },
+    [queryClient],
+  )
+
+  const akyMessages = useAkyMessages({
+    selectedCourseId,
+    selectedConversationId,
+    enabled,
+    onNewConversationId: handleNewConversationId,
   })
+  const { resetMessages } = akyMessages
 
   const deleteConversationMutation = useMutation({
     mutationFn: stergeConversatie,
   })
 
-  const clampPanelWidth = useCallback((nextWidth: number) => {
-    const maxWidth = Math.min(AKY_PANEL_MAX_WIDTH, window.innerWidth - AKY_PANEL_VIEWPORT_GAP)
-    const minWidth = Math.min(AKY_PANEL_MIN_WIDTH, maxWidth)
-    return Math.max(minWidth, Math.min(nextWidth, maxWidth))
-  }, [])
-
-  const clampHistoryWidth = useCallback((nextWidth: number) => {
-    const maxWidth = Math.min(AKY_HISTORY_MAX_WIDTH, panelWidth - AKY_CHAT_MIN_WIDTH)
-    const minWidth = Math.min(AKY_HISTORY_MIN_WIDTH, maxWidth)
-    return Math.max(minWidth, Math.min(nextWidth, maxWidth))
-  }, [panelWidth])
-
-  useEffect(() => {
-    filterModeRef.current = filterMode
-  }, [filterMode])
-
-  useEffect(() => {
-    if (!open) return undefined
-
-    function handleWindowResize() {
-      setPanelWidth((currentWidth) => clampPanelWidth(currentWidth))
-      setHistoryWidth((currentWidth) => clampHistoryWidth(currentWidth))
-    }
-
-    handleWindowResize()
-    window.addEventListener("resize", handleWindowResize)
-
-    return () => {
-      window.removeEventListener("resize", handleWindowResize)
-    }
-  }, [clampHistoryWidth, clampPanelWidth, open])
-
   useEffect(() => {
     if (!open) return
 
-    setHistoryWidth((currentWidth) => clampHistoryWidth(currentWidth))
-  }, [clampHistoryWidth, open])
-
-  useEffect(() => {
-    if (!themePickerOpen) {
-      return undefined
-    }
-
-    function handlePointerDown(event: PointerEvent) {
-      if (!(event.target instanceof Node)) {
-        return
-      }
-
-      if (!themePickerRef.current?.contains(event.target)) {
-        setThemePickerOpen(false)
-      }
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setThemePickerOpen(false)
-      }
-    }
-
-    document.addEventListener("pointerdown", handlePointerDown)
-    document.addEventListener("keydown", handleKeyDown)
-
-    return () => {
-      document.removeEventListener("pointerdown", handlePointerDown)
-      document.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [themePickerOpen])
-
-  useEffect(() => {
-    setSelectedCourseId(courseId)
-    setFilterMode("course")
-  }, [courseId])
-
-  useEffect(() => {
-    setError(null)
-  }, [selectedCourseId])
-
-  const fetchConversations = useCallback(async function fetchConversations(pageToLoad = 0, append = false, overrideFilter = null) {
-    const activeFilter = overrideFilter || filterModeRef.current
-    try {
-      if (append) {
-        setIsLoadingMoreConversations(true)
-      } else {
-        setIsLoadingConversations(true)
-      }
-
-      let res = (courseId && activeFilter === "course")
-        ? await getConversatii(courseId, pageToLoad)
-        : await getConversatiiGlobale(pageToLoad)
-
-      let items = Array.isArray(res) ? res : (res?.continut || [])
-      let hasMore = Array.isArray(res) ? false : ((res as ConversationsPage).areUrmatoarea ?? false)
-
-      // dacă suntem pe un curs nou fără conversații proprii, dar utilizatorul are conversații în cont,
-      // comutăm automat pe tab-ul "Toate" pentru ca utilizatorul să își vadă istoricul general
-      if (!append && pageToLoad === 0 && courseId && activeFilter === "course" && items.length === 0) {
-        const globalRes = await getConversatiiGlobale(0)
-        const globalItems = Array.isArray(globalRes) ? globalRes : (globalRes?.continut || [])
-        if (globalItems.length > 0) {
-          items = globalItems
-          hasMore = Array.isArray(globalRes) ? false : ((globalRes as ConversationsPage).areUrmatoarea ?? false)
-          setFilterMode("all")
-        }
-      }
-
-      setConversatii((prev) => (append ? [...prev, ...items] : items))
-      setHasMoreConversations(hasMore)
-      setConvPage(pageToLoad)
-    } catch (err) {
-      console.error("Failed to load conversations", err)
-    } finally {
-      setIsLoadingConversations(false)
-      setIsLoadingMoreConversations(false)
-    }
-  }, [courseId])
-
-  // Load conversations
-  useEffect(() => {
-    if (!open) return
-
-    setMessages([])
-    setError(null)
-    setConversatii([])
+    resetMessages()
     setSelectedConversationId(null)
     setView("list")
-    setConvPage(0)
-    setHasMoreConversations(false)
-    setHasMoreMessages(false)
-    setOldestLoadedMessageId(null)
-
-    // Reset course selection if it's the global widget
-    if (!courseId) {
-      setSelectedCourseId(null)
-    } else {
-      setSelectedCourseId(courseId)
-    }
-
-    void fetchConversations(0, false)
-  }, [open, courseId, fetchConversations])
+    setSelectedCourseId(courseId)
+    void queryClient.invalidateQueries({ queryKey: AKY_CONVERSATIONS_QUERY_KEY })
+  }, [open, courseId, queryClient, resetMessages])
 
   useEffect(() => {
-    try {
-      const savedTheme = window.localStorage.getItem(getAkyThemeStorageKey(user))
-      if (COURSE_THEME_KEYS.has(savedTheme)) {
-        setSelectedThemeKey(savedTheme)
-      } else {
-        setSelectedThemeKey(DEFAULT_COURSE_THEME)
+    if (!open || !courseId || filterMode !== "course") return
+
+    const firstPage = conversationsQuery.data?.pages[0]
+    if (!firstPage || firstPage.items.length > 0) return
+
+    let cancelled = false
+
+    void (async () => {
+      try {
+        const globalResponse = await getConversatiiGlobale(0)
+        const globalItems = Array.isArray(globalResponse) ? globalResponse : (globalResponse.continut ?? [])
+        if (!cancelled && globalItems.length > 0) {
+          setFilterMode("all")
+        }
+      } catch (err) {
+        console.error("Failed to load global conversations", err)
       }
-    } catch {
-      setSelectedThemeKey(DEFAULT_COURSE_THEME)
-    }
-  }, [user])
+    })()
 
-  useEffect(() => {
-    if (open && view === "chat") {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    return () => {
+      cancelled = true
     }
-  }, [isSending, messages, open, view])
+  }, [open, courseId, filterMode, conversationsQuery.data])
 
   if (isAdmin) {
     return null
@@ -358,154 +141,19 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
     }
   }
 
-  function handlePanelResizePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
-    event.preventDefault()
-    isResizingPanelRef.current = true
-    setIsResizing(true)
-
-    const previousCursor = document.body.style.cursor
-    const previousUserSelect = document.body.style.userSelect
-    document.body.style.cursor = "ew-resize"
-    document.body.style.userSelect = "none"
-
-    function handlePointerMove(moveEvent: PointerEvent) {
-      if (!isResizingPanelRef.current) return
-      setPanelWidth(clampPanelWidth(window.innerWidth - moveEvent.clientX))
-    }
-
-    function handlePointerUp() {
-      isResizingPanelRef.current = false
-      setIsResizing(false)
-      document.body.style.cursor = previousCursor
-      document.body.style.userSelect = previousUserSelect
-      window.removeEventListener("pointermove", handlePointerMove)
-      window.removeEventListener("pointerup", handlePointerUp)
-      window.removeEventListener("pointercancel", handlePointerUp)
-    }
-
-    window.addEventListener("pointermove", handlePointerMove)
-    window.addEventListener("pointerup", handlePointerUp)
-    window.addEventListener("pointercancel", handlePointerUp)
-  }
-
-  function handleHistoryResizePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
-    event.preventDefault()
-    event.stopPropagation()
-    isResizingHistoryRef.current = true
-    setIsResizing(true)
-
-    const startX = event.clientX
-    const startWidth = historyWidth
-    const previousCursor = document.body.style.cursor
-    const previousUserSelect = document.body.style.userSelect
-    document.body.style.cursor = "ew-resize"
-    document.body.style.userSelect = "none"
-
-    function handlePointerMove(moveEvent: PointerEvent) {
-      if (!isResizingHistoryRef.current) return
-      setHistoryWidth(clampHistoryWidth(startWidth + moveEvent.clientX - startX))
-    }
-
-    function handlePointerUp() {
-      isResizingHistoryRef.current = false
-      setIsResizing(false)
-      document.body.style.cursor = previousCursor
-      document.body.style.userSelect = previousUserSelect
-      window.removeEventListener("pointermove", handlePointerMove)
-      window.removeEventListener("pointerup", handlePointerUp)
-      window.removeEventListener("pointercancel", handlePointerUp)
-    }
-
-    window.addEventListener("pointermove", handlePointerMove)
-    window.addEventListener("pointerup", handlePointerUp)
-    window.addEventListener("pointercancel", handlePointerUp)
-  }
-
-  function handleThemeChange(themeKey: string) {
-    if (!COURSE_THEME_KEYS.has(themeKey)) {
-      return
-    }
-
-    setSelectedThemeKey(themeKey)
-    setThemePickerOpen(false)
-    try {
-      window.localStorage.setItem(getAkyThemeStorageKey(user), themeKey)
-    } catch {
-      // Theme still applies in memory even if persistence is blocked.
-    }
-  }
-
-  async function handleOpenConversation(convId: EntityId | null | undefined, cursId?: EntityId | null) {
-    if (convId == null) {
-      return
-    }
-
-    setSelectedConversationId(convId)
-    if (cursId) {
-      setSelectedCourseId(cursId)
-    }
-    setView("chat")
-    setMessages([])
-    setError(null)
-    setHasMoreMessages(false)
-    setOldestLoadedMessageId(null)
-
-    try {
-      setIsLoadingMessages(true)
-      const res = await getIstoric(convId)
-      const normalizedHistory = normalizeHistoryResponse(res)
-      setMessages(normalizedHistory.items)
-      setHasMoreMessages(normalizedHistory.hasMore)
-      setOldestLoadedMessageId(normalizedHistory.oldestLoadedMessageId)
-    } catch {
-      setError("Nu s-a putut încărca istoricul conversației.")
-    } finally {
-      setIsLoadingMessages(false)
-    }
-  }
-
-  async function loadOlderMessages() {
-    if (!selectedConversationId || !hasMoreMessages || !oldestLoadedMessageId || isLoadingOlderMessages) return
-
-    try {
-      setIsLoadingOlderMessages(true)
-      const res = await getIstoric(selectedConversationId, oldestLoadedMessageId)
-      const normalizedHistory = normalizeHistoryResponse(res)
-      setMessages((prev) => [...normalizedHistory.items, ...prev])
-      setHasMoreMessages(normalizedHistory.hasMore)
-      setOldestLoadedMessageId(normalizedHistory.oldestLoadedMessageId)
-    } catch (err) {
-      console.error("Nu s-au putut încărca mesajele anterioare", err)
-    } finally {
-      setIsLoadingOlderMessages(false)
-    }
-  }
-
   function handleScrollConversations(event: UIEvent<HTMLDivElement>) {
     const { scrollTop, scrollHeight, clientHeight } = event.currentTarget
     if (hasMoreConversations && !isLoadingMoreConversations && scrollHeight - scrollTop - clientHeight < 60) {
-      fetchConversations(convPage + 1, true)
+      void conversationsQuery.fetchNextPage()
     }
   }
 
-  function handleScrollMessages(event: UIEvent<HTMLDivElement>) {
-    const { scrollTop } = event.currentTarget
-    if (hasMoreMessages && !isLoadingOlderMessages && scrollTop < 40) {
-      loadOlderMessages()
-    }
-  }
-
-  async function fetchLatestMessages(convId: EntityId | null | undefined) {
-    if (convId == null) return
-    try {
-      const res = await getIstoric(convId)
-      const normalizedHistory = normalizeHistoryResponse(res)
-      setMessages(normalizedHistory.items)
-      setHasMoreMessages(normalizedHistory.hasMore)
-      setOldestLoadedMessageId(normalizedHistory.oldestLoadedMessageId)
-    } catch (err) {
-      console.error(err)
-    }
+  async function handleOpenConversation(conversationId: EntityId | null | undefined, cursId?: EntityId | null) {
+    if (conversationId == null) return
+    setSelectedConversationId(conversationId)
+    if (cursId) setSelectedCourseId(cursId)
+    setView("chat")
+    await akyMessages.loadHistory(conversationId)
   }
 
   function handleNewConversation() {
@@ -513,23 +161,22 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
     if (!courseId) {
       setSelectedCourseId(null)
     }
-    setMessages([])
-    setError(null)
-    setHasMoreMessages(false)
-    setOldestLoadedMessageId(null)
+    akyMessages.resetMessages()
     setView("chat")
   }
 
-  async function handleDeleteConversation(convId: EntityId | null | undefined, e: MouseEvent<HTMLButtonElement>) {
-    if (convId == null) {
-      return
-    }
+  async function handleDeleteConversation(conversationId: EntityId | null | undefined, event: MouseEvent<HTMLButtonElement>) {
+    if (conversationId == null) return
+    event.stopPropagation()
 
-    e.stopPropagation()
     try {
-      await deleteConversationMutation.mutateAsync(convId)
-      setConversatii((prev) => prev.filter((c) => c.id !== convId))
-      if (selectedConversationId === convId) {
+      await deleteConversationMutation.mutateAsync(conversationId)
+      queryClient.setQueryData<InfiniteData<NormalizedConversationsPage>>(getConversationsQueryKey(courseId, filterMode), (currentData) => {
+        if (!currentData) return currentData
+        return { ...currentData, pages: currentData.pages.map((page) => ({ ...page, items: page.items.filter((conversatie) => conversatie.id !== conversationId) })) }
+      })
+      void queryClient.invalidateQueries({ queryKey: AKY_CONVERSATIONS_QUERY_KEY, refetchType: "none" })
+      if (selectedConversationId === conversationId) {
         setView("list")
       }
     } catch (err) {
@@ -538,116 +185,8 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
   }
 
   function handleQuickQuestionClick(questionText: string) {
-    if (!enabled || !selectedCourseId || isSending) {
-      return
-    }
-
-    setDraft(questionText)
-  }
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const questionText = draft.trim()
-
-    if (!questionText || isSending || !enabled || !selectedCourseId) {
-      return
-    }
-
-    const now = new Date()
-    const userMessage = {
-      id: `user-${Date.now()}`,
-      rol: "UTILIZATOR",
-      continut: questionText,
-      createdAt: now.toISOString(),
-    }
-
-    setMessages((current) => [...current, userMessage])
-    setDraft("")
-    setIsSending(true)
-    setError(null)
-
-    try {
-      let response
-      if (!selectedConversationId) {
-        response = await sendMessageMutation.mutateAsync({
-          conversationId: null,
-          activeCourseId: selectedCourseId,
-          questionText,
-        })
-        const newConvId = (response as NewConversationResponse).conversatieId
-        if (newConvId != null) {
-          setSelectedConversationId(newConvId)
-
-          // Refresh conversatii list in background
-          void fetchConversations(0, false)
-          void fetchLatestMessages(newConvId)
-        }
-      } else {
-        response = await sendMessageMutation.mutateAsync({
-          conversationId: selectedConversationId,
-          activeCourseId: selectedCourseId,
-          questionText,
-        })
-        void fetchLatestMessages(selectedConversationId)
-      }
-    } catch (err: unknown) {
-      const typedError = err as AppAxiosError
-      console.error("Nu s-a putut trimite mesajul:", err)
-
-      if (selectedConversationId) {
-        void fetchLatestMessages(selectedConversationId)
-      }
-
-      if (typedError.response?.status === 429) {
-        setError("Ai depășit limita de întrebări pe minut. Te rugăm să aștepți puțin înainte de a încerca din nou.")
-      } else if (typedError.response?.status === 502 || typedError.response?.status === 503) {
-        setError("Serviciul Aky este temporar indisponibil. Te rugăm să încerci din nou mai târziu.")
-      } else if (typedError.response?.status === 404) {
-        setError("Modulul Aky de chat pentru acest curs este în pregătire (API 404). Răspunsul va fi disponibil când backend-ul RAG este activat.")
-      } else {
-        setError(typedError.response?.data?.eroare || "Nu am putut primi un răspuns de la Aky. Te rugăm să reîncerci.")
-      }
-
-      if (selectedConversationId) {
-        void fetchLatestMessages(selectedConversationId)
-      } else {
-        setMessages((current) => current.filter((m) => m.id !== userMessage.id))
-      }
-    } finally {
-      setIsSending(false)
-    }
-  }
-
-  async function handleRetry(mesajId: EntityId | null | undefined) {
-    if (!enabled || isSending || mesajId == null) return
-    setIsSending(true)
-    setError(null)
-
-    try {
-      await retryMessageMutation.mutateAsync(mesajId)
-      await fetchLatestMessages(selectedConversationId)
-    } catch (err) {
-      console.error("Eroare la retry:", err)
-      setError("Aky nu a putut răspunde nici de această dată. Te rog încearcă mai târziu.")
-    } finally {
-      setIsSending(false)
-    }
-  }
-
-  function formatTime(isoString: string | null | undefined) {
-    if (!isoString) return ""
-    return new Date(isoString).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-  }
-
-  function formatDate(isoString: string | null | undefined) {
-    if (!isoString) return ""
-    return new Date(isoString).toLocaleDateString("ro-RO", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })
-  }
-
-  const panelStyle: AkyPanelStyle = {
-    "--aky-panel-width": `${panelWidth}px`,
-    "--aky-history-width": `${historyWidth}px`,
-    width: (typeof window !== "undefined" && window.innerWidth >= 1024) ? `${panelWidth}px` : undefined,
+    if (!enabled || !selectedCourseId || akyMessages.isSending) return
+    akyMessages.setDraft(questionText)
   }
 
   return (
@@ -659,7 +198,7 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
         className="fixed right-7 bottom-7 z-40 h-[5.8rem] w-[5.8rem] overflow-hidden rounded-[2rem] border border-[#b8d2eb] bg-linear-to-br from-[#edf4fc] via-[#e2eefb] to-[#d3e4f7] p-0 shadow-[0_24px_58px_rgba(32,46,84,0.28)] transition hover:-translate-y-1 hover:shadow-[0_30px_68px_rgba(32,46,84,0.32)]"
       >
         <div className="flex h-full w-full items-center justify-center p-1.5">
-          <img src={ragLogo} alt="Aky" className="h-full w-full object-contain scale-[1.18]" />
+          <img src={ragLogo} alt="Aky" className="scale-[1.18] h-full w-full object-contain" />
         </div>
       </Button>
 
@@ -668,298 +207,76 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
           onOpenChange={handleOpenChange}
           style={panelStyle}
           className={cn(
-            "flex w-full max-w-none bg-linear-to-b from-[#fffdfa] via-[#fffdfb] to-[#f8fbff] p-0 sm:max-w-[58rem]",
+            "flex w-full max-w-none flex-col bg-linear-to-b from-[#fffdfa] via-[#fffdfb] to-[#f8fbff] p-0 sm:max-w-[58rem]",
             !isResizing && "transition-all duration-300",
-            "lg:w-[var(--aky-panel-width)] lg:max-w-[min(84rem,calc(100vw-2rem))] flex-col",
+            "lg:w-[var(--aky-panel-width)] lg:max-w-[min(84rem,calc(100vw-2rem))]",
           )}
         >
-          <div
-            role="separator"
-            aria-orientation="vertical"
-            aria-label="Redimensionează Aky"
+          <AkyResizeHandle
+            ariaLabel="Redimensionează Aky"
             onPointerDown={handlePanelResizePointerDown}
-            className="absolute left-[-0.5rem] top-1/2 z-50 hidden h-16 w-4 -translate-y-1/2 cursor-ew-resize items-center justify-center lg:flex"
-          >
-            <div className="flex h-14 w-3 items-center justify-center rounded-full border border-slate-200/80 bg-white/90 text-slate-300 shadow-[0_4px_12px_rgba(32,46,84,0.08)] backdrop-blur-sm transition hover:border-slate-300/90 hover:text-slate-400">
-              <GripVertical className="h-3.5 w-3.5" />
-            </div>
-          </div>
+            className="absolute top-1/2 left-[-0.5rem] z-50 hidden h-16 w-4 -translate-y-1/2 cursor-ew-resize items-center justify-center lg:flex"
+          />
           <div className="flex h-full min-w-[350px] flex-1 flex-col">
-            <SheetHeader className={`relative bg-linear-to-r ${selectedTheme.accent} text-white`}>
-            <div className="absolute -top-10 right-[-2rem] h-28 w-28 rounded-full bg-white/10 blur-sm" />
-            <div className="absolute -bottom-12 left-[-1.5rem] h-28 w-28 rounded-full bg-[#8bc8f1]/14 blur-sm" />
-
-              <div ref={themePickerRef} className="absolute right-16 top-4 z-20">
-              {themePickerOpen ? (
-                <div className="absolute right-0 top-12 w-56 rounded-[1.35rem] border border-[#d9c9ff] bg-[#fbf8ff]/98 p-2.5 text-[#3a2e66] shadow-[0_18px_48px_rgba(62,42,120,0.2)] backdrop-blur-md">
-                  <p className="px-2 pb-2 text-[0.68rem] font-semibold tracking-[0.14em] text-[#6c5c9a] uppercase">Tema</p>
-                  <div className="space-y-1">
-                    {COURSE_THEMES.map((theme) => {
-                      const isSelected = theme.key === selectedTheme.key
-
-                      return (
-                        <button
-                          key={theme.key}
-                          type="button"
-                          onClick={() => handleThemeChange(theme.key)}
-                          className={`flex w-full items-center justify-between gap-2 rounded-2xl border px-2 py-2 text-left text-sm font-medium transition ${isSelected ? "border-[#7650d8] bg-[#f3edff] text-[#6840c5]" : "border-transparent hover:bg-white/80"}`}
-                        >
-                          <span className="flex min-w-0 items-center gap-2">
-                            <span className={`h-5 w-5 shrink-0 rounded-full ${theme.swatch}`} />
-                            <span className="whitespace-nowrap">{theme.label}</span>
-                          </span>
-                          {isSelected ? <Check className="h-4 w-4 shrink-0" /> : null}
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              ) : null}
-              <button
-                type="button"
-                aria-label="Schimbă tema Aky"
-                onClick={() => setThemePickerOpen((currentValue) => !currentValue)}
-                className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/32 bg-white/16 text-white shadow-[0_10px_22px_rgba(15,23,42,0.14)] backdrop-blur-sm transition hover:bg-white/24"
-              >
-                <Palette className="h-4 w-4" />
-              </button>
-            </div>
-
-              <div className="flex items-center gap-3 pr-12 relative z-10 pt-2 pb-1">
-              {view === "chat" && (
-                <button
-                  onClick={() => {
-                    if (!courseId) setSelectedCourseId(null)
-                    setView("list")
-                    fetchConversations(0, false)
-                  }}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl hover:bg-white/20 transition-colors"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </button>
-              )}
-
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-white/20 bg-white/12 backdrop-blur-sm">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-[0_10px_22px_rgba(15,23,42,0.16)]">
-                  <img src={ragHeadLogo} alt="Aky" className="h-7 w-7 object-contain" />
-                </div>
+            <AkyChatHeader
+              selectedTheme={selectedTheme}
+              view={view}
+              activeCourseTitle={activeCourseTitle}
+              themePickerOpen={themePickerOpen}
+              setThemePickerOpen={setThemePickerOpen}
+              themePickerRef={themePickerRef}
+              onThemeChange={handleThemeChange}
+              onBackToList={() => {
+                if (!courseId) {
+                  setSelectedCourseId(null)
+                }
+                setView("list")
+                void queryClient.invalidateQueries({ queryKey: AKY_CONVERSATIONS_QUERY_KEY })
+              }}
+            />
+            <div className={cn("grid min-h-0 flex-1 bg-slate-50/50", historyVisible ? "lg:grid-cols-[var(--aky-history-width)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)]")}>
+              <div className={cn("relative flex min-h-0 flex-col border-r border-slate-100 bg-white/42", view === "chat" ? "hidden lg:flex" : "flex", !historyVisible && "lg:hidden")}>
+                <AkyResizeHandle
+                  ariaLabel="Redimensionează istoricul conversațiilor"
+                  onPointerDown={handleHistoryResizePointerDown}
+                  className="absolute top-[calc(50%-3.5rem)] right-[-0.5rem] z-30 hidden h-16 w-4 -translate-y-1/2 cursor-ew-resize items-center justify-center lg:flex"
+                />
+                <AkyConversationListPane
+                  historyVisible={historyVisible}
+                  setHistoryVisible={setHistoryVisible}
+                  selectedTheme={selectedTheme}
+                  handleNewConversation={handleNewConversation}
+                  handleScrollConversations={handleScrollConversations}
+                  courseId={courseId}
+                  filterMode={filterMode}
+                  onFilterChange={setFilterMode}
+                  isLoadingConversations={isLoadingConversations}
+                  conversatii={conversatii}
+                  courses={courses}
+                  formatDate={formatDate}
+                  handleOpenConversation={handleOpenConversation}
+                  handleDeleteConversation={handleDeleteConversation}
+                  hasMoreConversations={hasMoreConversations}
+                  isLoadingMoreConversations={isLoadingMoreConversations}
+                  fetchNextPage={() => void conversationsQuery.fetchNextPage()}
+                />
               </div>
 
-              <div className="min-w-0">
-                <SheetTitle className="text-white text-lg">Aky</SheetTitle>
-                <SheetDescription className="mt-0.5 truncate text-white/80 text-sm">
-                  {activeCourseTitle ? `Asistent: ${activeCourseTitle}` : "Chatbot Akadion"}
-                </SheetDescription>
-              </div>
-              </div>
-            </SheetHeader>
-
-          <div className={cn("grid min-h-0 flex-1 bg-slate-50/50", historyVisible ? "lg:grid-cols-[var(--aky-history-width)_minmax(0,1fr)]" : "lg:grid-cols-[minmax(0,1fr)]")}>
-            {/* CONVERSATION LIST VIEW */}
-            <div className={cn("relative min-h-0 flex-col border-r border-slate-100 bg-white/42", view === "chat" ? "hidden lg:flex" : "flex", !historyVisible && "lg:hidden")}>
-              <div
-                role="separator"
-                aria-orientation="vertical"
-                aria-label="Redimensionează istoricul conversațiilor"
-                onPointerDown={handleHistoryResizePointerDown}
-                className="absolute right-[-0.5rem] top-[calc(50%-3.5rem)] z-30 hidden h-16 w-4 -translate-y-1/2 cursor-ew-resize items-center justify-center lg:flex"
-              >
-                <div className="flex h-14 w-3 items-center justify-center rounded-full border border-slate-200/80 bg-white/90 text-slate-300 shadow-[0_4px_12px_rgba(32,46,84,0.08)] backdrop-blur-sm transition hover:border-slate-300/90 hover:text-slate-400">
-                  <GripVertical className="h-3.5 w-3.5" />
-                </div>
-              </div>
-              <AkyConversationListPane
+              <AkyChatPanel
                 historyVisible={historyVisible}
                 setHistoryVisible={setHistoryVisible}
                 selectedTheme={selectedTheme}
-                handleNewConversation={handleNewConversation}
-                handleScrollConversations={handleScrollConversations}
-                courseId={courseId}
-                filterMode={filterMode}
-                setFilterMode={setFilterMode}
-                fetchConversations={fetchConversations}
-                isLoadingConversations={isLoadingConversations}
-                conversatii={conversatii}
                 courses={courses}
-                formatDate={formatDate}
-                handleOpenConversation={handleOpenConversation}
-                handleDeleteConversation={handleDeleteConversation}
-                hasMoreConversations={hasMoreConversations}
-                isLoadingMoreConversations={isLoadingMoreConversations}
-                convPage={convPage}
+                selectedCourseId={selectedCourseId}
+                setSelectedCourseId={setSelectedCourseId}
+                view={view}
+                open={open}
+                activeCourseTitle={activeCourseTitle}
+                enabled={enabled}
+                akyMessages={akyMessages}
+                onQuickQuestion={handleQuickQuestionClick}
               />
             </div>
-
-            <div className={cn("min-h-0 flex-col bg-slate-50/50", view === "list" ? "hidden lg:flex" : "flex")}>
-              {!historyVisible ? (
-                <div className="hidden items-center border-b border-slate-100 bg-white/45 px-5 py-3 lg:flex">
-                  <button
-                    type="button"
-                    onClick={() => setHistoryVisible(true)}
-                    className="flex items-center gap-2 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-1.5 text-xs font-semibold text-slate-500 transition hover:border-[#bfd5eb] hover:bg-white hover:text-[#24385b]"
-                  >
-                    <PanelLeftOpen className="h-4 w-4" />
-                    Istoric
-                  </button>
-                </div>
-              ) : null}
-              {/* NO COURSE SELECTED (SELECT COURSE VIEW) */}
-              {!selectedCourseId ? <AkyCourseSelectView selectedTheme={selectedTheme} courses={courses} selectedCourseId={selectedCourseId} setSelectedCourseId={setSelectedCourseId} /> : null}
-
-              {/* CHAT VIEW */}
-              {selectedCourseId ? (
-              <>
-                <div className="flex flex-1 flex-col overflow-y-auto px-6 py-5" onScroll={handleScrollMessages}>
-                  {messages.length === 0 && !isLoadingMessages ? (
-                    <>
-                      <Card className="border-[#d9e4f4] bg-linear-to-br from-[#edf7ff] via-[#f8fbff] to-white shadow-[0_18px_40px_rgba(32,46,84,0.08)] mb-6">
-                        <CardContent className="space-y-4 px-5 py-5">
-                          <div className="flex items-start gap-3">
-                            <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border bg-linear-to-br ${selectedTheme.accent} ${selectedTheme.heroBorder} ${selectedTheme.heroStatText} shadow-[0_12px_24px_rgba(24,49,83,0.14)]`}>
-                              <Sparkles className="h-5 w-5" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="font-semibold text-[#24385b]">Salut! Sunt Aky.</p>
-                              <p className="mt-1 text-sm leading-6 text-slate-600">
-                                Sunt pregătit să-ți răspund la întrebări pe baza materialelor de la <span className="font-semibold text-slate-800">{activeCourseTitle}</span>. Adresează-mi o întrebare mai jos!
-                              </p>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <div className="space-y-3">
-                        <p className="text-xs font-semibold tracking-[0.16em] text-slate-500 uppercase">Întrebări rapide</p>
-                        <div className="flex flex-wrap gap-2">
-                          {QUICK_QUESTIONS.map((question) => (
-                            <button
-                              key={question}
-                              type="button"
-                              onClick={() => handleQuickQuestionClick(question)}
-                              className="rounded-2xl border border-[#d9e4f4] bg-white px-3.5 py-2.5 text-left text-sm text-[#3f698a] shadow-xs transition hover:border-[#bfd5eb] hover:bg-[#f4f8fd]"
-                            >
-                              {question}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  ) : null}
-
-                  {isLoadingMessages ? (
-                    <div className="flex flex-1 items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-slate-300" />
-                    </div>
-                  ) : (
-                    <div className="flex-1 space-y-4">
-                      {hasMoreMessages ? (
-                        <div className="pb-2 text-center">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={loadOlderMessages}
-                            disabled={isLoadingOlderMessages}
-                            className="rounded-xl text-xs font-semibold text-[#3b6ea8] hover:bg-[#f4f8fd]"
-                          >
-                            {isLoadingOlderMessages ? (
-                              <>
-                                <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-                                Se încarcă mesajele mai vechi...
-                              </>
-                            ) : (
-                              "Încărcare mesaje mai vechi"
-                            )}
-                          </Button>
-                        </div>
-                      ) : messages.length > 0 ? (
-                        <p className="pb-2 text-center text-[11px] font-medium text-slate-400">
-                          — Începutul conversației —
-                        </p>
-                      ) : null}
-                      {messages.map((message, index) => {
-                        const isUser = message.rol === "UTILIZATOR"
-
-                        return (
-                          <div key={`message-${message.id ?? index}`} className={cn("flex flex-col gap-1.5", isUser ? "items-end" : "items-start")}>
-                            <div
-                              className={cn(
-                                "max-w-[85%] rounded-[1.35rem] px-4 py-3 text-sm leading-relaxed shadow-xs",
-                                isUser
-                                  ? `rounded-br-xs bg-linear-to-r ${selectedTheme.accent} text-white`
-                                  : "rounded-bl-xs border border-[#e4d8cd] bg-white text-slate-800"
-                              )}
-                            >
-                              <div className="whitespace-pre-wrap font-sans text-sm markdown-body">
-                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                   {message.continut ?? ""}
-                                 </ReactMarkdown>
-                               </div>
-
-                               {!isUser && typeof message.surseFolosite === "string" && message.surseFolosite ? (
-                                 <div className="mt-2.5 space-y-1 border-t border-slate-100 pt-2">
-                                   <p className="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Surse folosite:</p>
-                                   <div className="flex flex-wrap gap-1.5">
-                                     {message.surseFolosite.split(",").filter(Boolean).map((sourceItem, index) => {
-                                       const parts = sourceItem.split("|")
-                                       const sourceId = parts[0]
-                                       const sourceName = parts.length > 1 ? parts[1] : `Document ${sourceId}`;
-                                       return (
-                                        <span key={index} className="inline-flex items-center gap-1 rounded-xl border border-[#d9e4f4] bg-[#f4f8fd] px-2.5 py-1 text-[11px] font-semibold text-[#24385b]">
-                                          <FileText className="h-3 w-3 text-[#3b6ea8]" />
-                                          <span className="max-w-[140px] truncate">{sourceName}</span>
-                                        </span>
-                                      )
-                                     })}
-                                   </div>
-                                 </div>
-                              ) : null}
-                            </div>
-                            <div className="flex items-center gap-2 px-1">
-                              {isUser && message.areRaspuns === false && (
-                                <div className="flex items-center gap-1.5">
-                                  <AlertCircle className="h-3.5 w-3.5 text-rose-500" />
-                                  <span className="text-[10px] font-medium text-rose-500">Nu s-a putut răspunde</span>
-                                  <button
-                                    onClick={() => handleRetry(message.id)}
-                                    className="flex items-center gap-1 text-[10px] font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 transition-colors"
-                                  >
-                                    <RotateCcw className="h-3 w-3" /> Retry
-                                  </button>
-                                </div>
-                              )}
-                              <span className="text-[10px] font-medium text-slate-400">{formatTime(message.createdAt)}</span>
-                            </div>
-                          </div>
-                        )
-                      })}
-
-                      {isSending ? (
-                        <div className="flex flex-col items-start gap-1.5">
-                          <div className="flex items-center gap-2 rounded-[1.35rem] rounded-bl-xs border border-[#e4d8cd] bg-white px-4 py-3 text-xs text-slate-600 shadow-xs">
-                            <Loader2 className="h-4 w-4 animate-spin text-[#24385b]" />
-                            <span>Aky analizează materialele cursului...</span>
-                          </div>
-                        </div>
-                      ) : null}
-
-                      {error ? (
-                        <Alert variant="destructive" className="rounded-2xl border-rose-200 bg-rose-50/90 px-4 py-3">
-                          <AlertCircle className="h-4 w-4 text-rose-600" />
-                          <AlertDescription className="text-xs font-medium text-rose-800">{error}</AlertDescription>
-                        </Alert>
-                      ) : null}
-
-                      <div ref={messagesEndRef} />
-                    </div>
-                  )}
-                </div>
-
-                <AkyComposer enabled={enabled} selectedCourseId={selectedCourseId} isSending={isSending} draft={draft} setDraft={setDraft} handleSubmit={handleSubmit} accentClassName={selectedTheme.accent} />
-              </>
-              ) : null}
-            </div>
-          </div>
           </div>
         </SheetContent>
       </Sheet>

@@ -5,9 +5,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 import type { FieldErrors } from "@/types/api"
+import type { PersonalInfoForm } from "@/features/profile/profile.types"
 
 interface PersonalInfoCardProps {
-  profileForm: any
+  profileForm: PersonalInfoForm
   profileErrors: FieldErrors
   updateProfileMutationPending: boolean
   clearProfileError: (field: string) => void
@@ -26,7 +27,7 @@ export default function PersonalInfoCard({ profileForm, profileErrors, updatePro
             <div className="space-y-2">
               <Label htmlFor="profile-nume" className="text-xs font-bold uppercase tracking-wider text-slate-600">Nume</Label>
               <profileForm.Field name="nume">
-                {(field: any) => (
+                {(field) => (
                   <>
                     <Input id="profile-nume" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("nume") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10" />
                     {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
@@ -39,7 +40,7 @@ export default function PersonalInfoCard({ profileForm, profileErrors, updatePro
             <div className="space-y-2">
               <Label htmlFor="profile-prenume" className="text-xs font-bold uppercase tracking-wider text-slate-600">Prenume</Label>
               <profileForm.Field name="prenume">
-                {(field: any) => (
+                {(field) => (
                   <>
                     <Input id="profile-prenume" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("prenume") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10" />
                     {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
@@ -53,7 +54,7 @@ export default function PersonalInfoCard({ profileForm, profileErrors, updatePro
           <div className="space-y-2">
             <Label htmlFor="profile-facultate" className="text-xs font-bold uppercase tracking-wider text-slate-600">Facultate</Label>
             <profileForm.Field name="facultate">
-              {(field: any) => (
+              {(field) => (
                 <>
                   <Input id="profile-facultate" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("facultate") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10" />
                   {profileErrors.facultate ? <p className="text-sm text-rose-600">{profileErrors.facultate}</p> : null}

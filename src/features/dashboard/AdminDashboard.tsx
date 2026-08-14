@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import { AlertCircle, BookOpenText, Clock3, Users } from "lucide-react"
@@ -26,9 +27,13 @@ export default function AdminDashboard() {
   })
 
   const typedError = queryError as AppAxiosError | null
-  if (typedError?.response?.status === 401) {
-    void refreshAuth()
-  }
+  const hasSessionExpired = typedError?.response?.status === 401
+
+  useEffect(() => {
+    if (hasSessionExpired) {
+      void refreshAuth()
+    }
+  }, [hasSessionExpired, refreshAuth])
 
   const error = typedError?.response?.data?.message ?? typedError?.response?.data?.eroare ?? ""
 
