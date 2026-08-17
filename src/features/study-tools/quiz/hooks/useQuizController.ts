@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useSearchParams } from "react-router-dom"
+import { isStudentUser } from "@/auth/user.utils"
 import { useAuth } from "@/auth/useAuth"
 import { listStudentCourses } from "@/features/courses/api/courses"
-import { getDocumenteAccesibile } from "@/features/study-tools/api/studyTools"
+import { getDocumenteAccesibile } from "@/features/study-tools/quiz/api/quiz"
 import { QUIZ_COURSES_QUERY_KEY } from "@/features/study-tools/quiz/quiz.constants"
 import { useQuizExamTimer } from "@/features/study-tools/quiz/hooks/useQuizExamTimer"
 import { useQuizGeneration } from "@/features/study-tools/quiz/hooks/useQuizGeneration"
 import { useQuizHistory } from "@/features/study-tools/quiz/hooks/useQuizHistory"
 import { buildQuizAnswersPayload, getQuizErrorMessage } from "@/features/study-tools/quiz/quiz.utils"
 import { useStoredPageTheme } from "@/features/study-tools/lib/pageThemeStorage"
-import { isStudentUser } from "@/lib/user"
 
 import type { AccessibleDocument, CourseOption, QuizGenerationResponse } from "@/features/study-tools/quiz/quiz.types"
 

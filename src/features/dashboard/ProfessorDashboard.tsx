@@ -11,10 +11,10 @@ import CourseCard, { EmptyCoursesState } from "@/features/courses/components/Cou
 import { useCourseThemePreferences } from "@/features/courses/lib/courseThemeStorage"
 import { useAuth } from "@/auth/useAuth"
 import { listProfessorCourses, getCourseErrorMessage } from "@/features/courses/api/courses"
-import { getUserGreetingName } from "@/lib/user"
+import { getUserGreetingName } from "@/auth/user.utils"
 import { DEFAULT_COURSE_THEME } from "@/lib/courseThemes"
 
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 import type { Course } from "@/types/course"
 import { getActiveCourseCounts, heroStatsBadgeClassName, heroStatsLabelClassName, heroStatsSecondaryDotClassName, heroStatsValueClassName, PROFESSOR_DASHBOARD_QUERY_KEY, professorDashboardLogo } from "@/features/dashboard/dashboardConstants"
 
@@ -31,7 +31,7 @@ export default function ProfessorDashboard() {
 
   const { courseThemes, setCourseTheme } = useCourseThemePreferences(user, courses.map((course) => course.id))
 
-  const typedError = queryError as AppAxiosError | null
+  const typedError = queryError as ApiError | null
   const hasSessionExpired = typedError?.response?.status === 401
 
   useEffect(() => {

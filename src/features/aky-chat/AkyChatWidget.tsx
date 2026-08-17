@@ -1,12 +1,12 @@
 import { useInfiniteQuery, useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query"
 import { useCallback, useEffect, useState, type MouseEvent, type UIEvent } from "react"
 
+import { isAdminUser } from "@/auth/user.utils"
 import { useAuth } from "@/auth/useAuth"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { getConversatii, getConversatiiGlobale, stergeConversatie } from "@/features/aky-chat/api/chat"
 import { useMyCoursesQuery } from "@/features/courses/hooks/useMyCoursesQuery"
-import { getConversatii, getConversatiiGlobale, stergeConversatie } from "@/features/study-tools/api/studyTools"
-import { isAdminUser } from "@/lib/user"
 import { cn } from "@/lib/utils"
 import type { PaginatedResponse } from "@/types/api"
 

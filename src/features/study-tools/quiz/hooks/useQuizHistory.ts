@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 
-import { getDetaliuQuizStudent, getIstoricQuizStudent, stergeIncercareQuiz } from "@/features/study-tools/api/studyTools"
+import { getDetaliuQuizStudent, getIstoricQuizStudent, stergeIncercareQuiz } from "@/features/study-tools/quiz/api/quiz"
 
 import type { QuizAttemptDetail, QuizAttemptHistoryItem } from "@/features/study-tools/quiz/quiz.types"
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 
 export function useQuizHistory(selectedCourseId: string) {
   const [selectedHistoryAttempt, setSelectedHistoryAttempt] = useState<QuizAttemptDetail | null>(null)
@@ -41,7 +41,7 @@ export function useQuizHistory(selectedCourseId: string) {
       }
       await refetchQuizHistory()
     } catch (error: unknown) {
-      const typedError = error as AppAxiosError
+      const typedError = error as ApiError
       console.error("Nu s-a putut șterge încercarea de quiz", error)
       setHistoryError(typedError.response?.data?.eroare || "Nu s-a putut șterge încercarea.")
     }
@@ -70,7 +70,7 @@ export function useQuizHistory(selectedCourseId: string) {
       const detail = await getDetaliuQuizStudent(incercareId)
       setSelectedHistoryAttempt(detail)
     } catch (error: unknown) {
-      const typedError = error as AppAxiosError
+      const typedError = error as ApiError
       console.error("Nu s-a putut încărca detaliul încercării", error)
       setHistoryError(typedError.response?.data?.eroare || "Nu s-a putut încărca detaliul încercării.")
     } finally {

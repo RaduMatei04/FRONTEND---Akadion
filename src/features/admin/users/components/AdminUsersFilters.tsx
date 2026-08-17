@@ -1,6 +1,6 @@
 import { stateLabels } from "@/auth/userState"
 
-import type { UserState } from "@/types/app"
+import type { UserState } from "@/auth/auth.types"
 
 interface AdminUsersFiltersProps {
   tabs: UserState[]

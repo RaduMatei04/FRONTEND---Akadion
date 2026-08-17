@@ -12,10 +12,10 @@ import { useAuth } from "@/auth/useAuth"
 import { enrollStudentCourse, getCourseErrorMessage, listStudentAvailableCourses, listStudentCourses } from "@/features/courses/api/courses"
 import { normalizeAvailableCourse, normalizeEnrolledCourse } from "@/features/courses/lib/courseView"
 import { getStudentHomepageOwlId, getStudentHomepageOwlImage, getStudentHomepageOwlRole, hasDiscoveredOwlHall } from "@/features/owl-hall/lib/legendaryOwls"
-import { getUserGreetingName } from "@/lib/user"
+import { getUserGreetingName } from "@/auth/user.utils"
 import { DEFAULT_COURSE_THEME } from "@/lib/courseThemes"
 
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 import type { Course } from "@/types/course"
 import { heroStatsBadgeClassName, heroStatsLabelClassName, heroStatsSecondaryDotClassName, heroStatsValueClassName, STUDENT_DASHBOARD_QUERY_KEY, studentDashboardLogo } from "@/features/dashboard/dashboardConstants"
 
@@ -55,7 +55,7 @@ export default function StudentDashboard() {
   const enrollMutation = useMutation({ mutationFn: enrollStudentCourse })
 
   useEffect(() => {
-    const typedError = queryError as AppAxiosError | null
+    const typedError = queryError as ApiError | null
     if (typedError?.response?.status === 401) {
       void refreshAuth()
     }
@@ -82,7 +82,7 @@ export default function StudentDashboard() {
       setNotice("Înscrierea a fost finalizată cu succes.")
       navigate(`/courses/${course.id}`, { state: { course: enrolledCourse ?? normalizeEnrolledCourse({ ...course, procentajProgres: 0 }) } })
     } catch (enrollError: unknown) {
-      const typedError = enrollError as AppAxiosError
+      const typedError = enrollError as ApiError
       if (typedError.response?.status === 401) {
         await refreshAuth()
       }

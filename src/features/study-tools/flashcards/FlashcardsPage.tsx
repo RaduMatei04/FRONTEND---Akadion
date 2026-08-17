@@ -1,23 +1,24 @@
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useEffect, useRef, useState } from "react"
+import { isStudentUser } from "@/auth/user.utils"
 import { useAuth } from "@/auth/useAuth"
 import AppShell from "@/app/layout/AppShell"
 import AkyChatWidget from "@/features/aky-chat/AkyChatWidget"
+import { genereazaFlashcards } from "@/features/study-tools/flashcards/api/flashcards"
+import type { Flashcard } from "@/features/study-tools/flashcards/flashcards.types"
 import StudyToolsThemePicker from "@/features/study-tools/components/StudyToolsThemePicker"
 import FlashcardsConfigurationCard from "@/features/study-tools/flashcards/components/FlashcardsConfigurationCard"
 import FlashcardsDeckView from "@/features/study-tools/flashcards/components/FlashcardsDeckView"
+import { getDocumenteAccesibile } from "@/features/study-tools/quiz/api/quiz"
+import type { AccessibleDocument } from "@/features/study-tools/quiz/quiz.types"
 import { Card, CardContent } from "@/components/ui/card"
-import { genereazaFlashcards, getDocumenteAccesibile } from "@/features/study-tools/api/studyTools"
-import { getCourseTheme } from "@/lib/courseThemes"
 import { listStudentCourses } from "@/features/courses/api/courses"
 import { useStoredPageTheme } from "@/features/study-tools/lib/pageThemeStorage"
-import { isStudentUser } from "@/lib/user"
+import { getCourseTheme } from "@/lib/courseThemes"
 import { cn } from "@/lib/utils"
 
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 import type { CourseOption } from "@/types/course"
-import type { AccessibleDocument } from "@/features/study-tools/quiz/quiz.types"
-import type { Flashcard } from "@/types/quiz"
 const FLASHCARDS_COURSES_QUERY_KEY = ["flashcards", "courses"] as const
 
 interface FlashcardRecord extends Flashcard {
@@ -130,7 +131,7 @@ export default function FlashcardsPage() {
 
       setFlashcardError("Aky nu a putut genera flashcard-uri structurate corect. Încearcă din nou.")
     } catch (error: unknown) {
-      const typedError = error as AppAxiosError
+      const typedError = error as ApiError
       setFlashcardError(typedError.response?.data?.eroare || String(typedError.response?.data?.detail || "") || "Nu am putut genera flashcard-urile.")
     }
   }

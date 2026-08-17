@@ -7,13 +7,13 @@ import ProfessorInfoCard from "@/features/courses/detail/components/ProfessorInf
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { getInitials } from "@/auth/user.utils"
 import { cn } from "@/lib/utils"
-import { getInitials } from "@/lib/user"
 import { getProfessorName } from "@/features/courses/lib/courseView"
+import CourseStudentsTab from "./students/CourseStudentsTab"
+import CourseWeeksTab from "./weeks/CourseWeeksTab"
 
 import CourseDetailTabs from "./components/CourseDetailTabs"
-import CourseStudentsTab from "./components/CourseStudentsTab"
-import CourseWeeksTab from "./components/CourseWeeksTab"
 import { extractFilename, formatDisplayDate, formatDocumentsCount, getDocumentHref } from "./course-detail.utils"
 import { useCourseDetailController } from "./hooks/useCourseDetailController"
 

@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { UserStateBadge } from "@/auth/badges"
 
-import type { StatusPageProps } from "@/types/app"
+import type { StatusPageProps } from "@/features/auth/status/status-page.types"
 
 const completeProfileLogo = "/assets/logo_bufnita.png"
 

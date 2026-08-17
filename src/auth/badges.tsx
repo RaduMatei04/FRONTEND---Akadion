@@ -1,8 +1,12 @@
-import { getRoleLabel } from "@/lib/user"
+import { getRoleLabel } from "@/auth/user.utils"
 import { stateBadgeClasses, stateLabels } from "@/auth/userState"
 
-import type { UserRoleBadgeProps, UserStateBadgeProps } from "@/types/app"
-import type { UserState } from "@/types/app"
+import type { UserState, UserStateBadgeProps } from "@/auth/auth.types"
+import type { UserRole } from "@/types/user"
+
+interface UserRoleBadgeProps {
+  role?: UserRole | null
+}
 
 export function UserStateBadge({ state, label, className = "" }: UserStateBadgeProps) {
   const typedState = state as UserState

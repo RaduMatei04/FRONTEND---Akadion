@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react"
 
 import type { EntityId, PaginatedResponse } from "@/types/api"
-import type { AkyMessage, Conversatie } from "@/types/chat"
 import type { CourseOption } from "@/types/course"
 
 export type ChatView = "list" | "chat"
@@ -15,6 +14,25 @@ export interface AkyChatWidgetProps {
   courseId?: EntityId | null
   courseTitle?: string | null
   enabled?: boolean
+}
+
+export interface Conversatie {
+  id?: string | number
+  titlu?: string
+  nume?: string
+  createdAt?: string
+  updatedAt?: string
+  [key: string]: unknown
+}
+
+export interface AkyMessage {
+  id?: string | number
+  intrebare?: string
+  raspuns?: string
+  continut?: string
+  role?: string
+  createdAt?: string
+  [key: string]: unknown
 }
 
 export interface ConversationRecord extends Conversatie {

@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { createProfessorCourse, getCourseErrorMessage, getCourseFieldErrors } from "@/features/courses/api/courses"
 import { newCourseSchema } from "@/features/courses/course.schemas"
 
-import type { AppAxiosError, FieldErrors } from "@/types/api"
+import type { ApiError, FieldErrors } from "@/types/api"
 
 function getTodayInputValue() {
   return new Date().toISOString().slice(0, 10)
@@ -31,7 +31,7 @@ export default function NewCoursePage() {
       navigate(createdCourse?.id ? `/courses/${createdCourse.id}` : "/courses")
     },
     onError: async (error: unknown) => {
-      const typedError = error as AppAxiosError
+      const typedError = error as ApiError
 
       if (typedError.response?.status === 401) {
         await refreshAuth()

@@ -7,12 +7,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { getApiErrorMessage } from "@/api/error-helpers"
+import { isAdminUser } from "@/auth/user.utils"
 import { AdminCourseList, EmptyCoursesState } from "@/features/courses/components/CourseCard"
 import { useAuth } from "@/auth/useAuth"
-import { isAdminUser } from "@/lib/user"
 import { listAdminCourses } from "@/features/courses/api/courses"
 
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 import type { Course } from "@/types/course"
 
 const easterOwlOne = "/img1.png"
@@ -158,7 +158,7 @@ export default function CoursesPage() {
       return
     }
 
-    const typedError = queryError as AppAxiosError
+    const typedError = queryError as ApiError
     if (typedError.response?.status === 401) {
       void refreshAuth()
     }

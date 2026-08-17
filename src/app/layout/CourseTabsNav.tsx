@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import { NavLink, useLocation } from "react-router-dom"
 import { useAuth } from "@/auth/useAuth"
 import { useMyCoursesQuery } from "@/features/courses/hooks/useMyCoursesQuery"
-import { isAdminUser, isStudentUser } from "@/lib/user"
+import { isAdminUser, isStudentUser } from "@/auth/user.utils"
 import { cn } from "@/lib/utils"
 
 interface CourseTabsNavProps {

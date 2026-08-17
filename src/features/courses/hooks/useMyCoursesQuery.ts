@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { useAuth } from "@/auth/useAuth"
 import { listProfessorCourses, listStudentCourses } from "@/features/courses/api/courses"
-import { isAdminUser, isProfessorUser, isStudentUser } from "@/lib/user"
+import { isAdminUser, isProfessorUser, isStudentUser } from "@/auth/user.utils"
 
 export const MY_COURSES_QUERY_KEY = ["courses", "mine"] as const
 

@@ -1,4 +1,4 @@
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 
 import type { QuizQuestionRecord } from "./quiz.types"
 
@@ -13,7 +13,7 @@ export function buildQuizAnswersPayload(
 }
 
 export function getQuizErrorMessage(error: unknown, fallback: string) {
-  const typedError = error as AppAxiosError
+  const typedError = error as ApiError
   return typedError.response?.data?.eroare || String(typedError.response?.data?.detail || "") || fallback
 }
 

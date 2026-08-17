@@ -1,7 +1,7 @@
-import type { AppAxiosError, FieldErrors } from "@/types/api"
+import type { ApiError, FieldErrors } from "@/types/api"
 
 export function getApiErrorMessage(error: unknown, fallbackMessage: string) {
-  const typedError = error as AppAxiosError
+  const typedError = error as ApiError
   const status = typedError.response?.status
   const backendMessage = typedError.response?.data?.message ?? typedError.response?.data?.eroare
 
@@ -33,6 +33,6 @@ export function getApiErrorMessage(error: unknown, fallbackMessage: string) {
 }
 
 export function getApiFieldErrors(error: unknown): FieldErrors {
-  const fieldErrors = (error as AppAxiosError).response?.data?.campuri
+  const fieldErrors = (error as ApiError).response?.data?.campuri
   return fieldErrors && typeof fieldErrors === "object" ? fieldErrors : {}
 }

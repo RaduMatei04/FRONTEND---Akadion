@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query"
 import { useState } from "react"
 
-import { finalizeazaQuiz, genereazaQuiz } from "@/features/study-tools/api/studyTools"
+import { finalizeazaQuiz, genereazaQuiz } from "@/features/study-tools/quiz/api/quiz"
 
 import type { QuizQuestionRecord, QuizResultRecord } from "@/features/study-tools/quiz/quiz.types"
 

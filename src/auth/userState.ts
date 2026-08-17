@@ -1,4 +1,5 @@
-import type { AdminManagedUser, UserState } from "@/types/app"
+import type { UserState } from "@/auth/auth.types"
+import type { AdminManagedUser } from "@/features/admin/users/admin-users.types"
 
 export const USER_STATES: UserState[] = ["ALL", "PENDING", "ACTIV", "INACTIV", "RESPINS", "INCOMPLET"]
 

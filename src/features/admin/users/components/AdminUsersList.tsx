@@ -3,9 +3,9 @@ import { UserRoleBadge, UserStateBadge } from "@/auth/badges"
 import { getAdminUserState } from "@/auth/userState"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getUserDisplayName, getUserInitials } from "@/lib/user"
+import { getUserDisplayName, getUserInitials } from "@/auth/user.utils"
 
-import type { AdminManagedUser } from "@/types/app"
+import type { AdminManagedUser } from "@/features/admin/users/admin-users.types"
 
 interface AdminUsersListProps {
   allUsersLength: number

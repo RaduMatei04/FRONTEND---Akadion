@@ -1,17 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
+import { useCallback, useEffect, useRef } from "react"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import apiClient from "@/api/client"
+import { AUTH_ME_QUERY_KEY, getAuthenticatedUser } from "@/auth/api/auth"
 import { AuthContext } from "@/auth/AuthContext"
+import type { AuthProviderProps } from "@/auth/auth.types"
 import { startLogout } from "@/auth/logout"
 
-import type { AppAxiosError } from "@/types/api"
-import type { AuthProviderProps } from "@/types/auth"
+import type { ApiError } from "@/types/api"
 import type { AuthUser } from "@/types/user"
 
-const AUTH_ME_QUERY_KEY = ["auth", "me"] as const
-
 function getErrorMessage(error: unknown) {
-  const authError = error as AppAxiosError
+  const authError = error as ApiError
   return authError.response?.data?.message ?? authError.response?.data?.eroare ?? "Nu am putut verifica sesiunea curentă."
 }
 
@@ -25,51 +24,54 @@ function forceRelogin() {
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const queryClient = useQueryClient()
-  const [loading, setLoading] = useState(true)
-  const [authenticated, setAuthenticated] = useState(false)
-  const [user, setUser] = useState<AuthUser | null>(null)
-  const [error, setError] = useState("")
 
-  // Păstrăm o referință la user pentru a putea fi accesată în interceptorul Axios
-  // fără a re-crea interceptorul la fiecare schimbare a stării.
+  const authMeQuery = useQuery<AuthUser | null>({
+    queryKey: AUTH_ME_QUERY_KEY,
+    queryFn: getAuthenticatedUser,
+    retry: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  })
+
+  // Păstrăm o referință la user pentru handlerul de business 403
+  // fără a-l reatașa la fiecare schimbare a stării.
+  const user = authMeQuery.data ?? null
+  const loading = authMeQuery.isPending || authMeQuery.isFetching
+  const authenticated = Boolean(user)
+  const error = authMeQuery.isError && (authMeQuery.error as ApiError).response?.status !== 401
+    ? getErrorMessage(authMeQuery.error)
+    : ""
+
   const userRef = useRef<AuthUser | null>(null)
   useEffect(() => {
     userRef.current = user
   }, [user])
 
   const refreshAuth = useCallback(async (): Promise<void> => {
-    setLoading(true)
+    await authMeQuery.refetch()
+  }, [authMeQuery])
 
-    try {
-      const response = await apiClient.get<AuthUser>("/api/auth/me")
-      setUser(response.data as AuthUser)
-      setAuthenticated(true)
-      setError("")
-      queryClient.setQueryData(AUTH_ME_QUERY_KEY, response.data)
-    } catch (authError: unknown) {
-      const typedError = authError as AppAxiosError
+  const setUserState = useCallback((value: ((currentValue: AuthUser | null) => AuthUser | null) | AuthUser | null) => {
+    const nextValue = typeof value === "function" ? value(user) : value
+    queryClient.setQueryData(AUTH_ME_QUERY_KEY, nextValue)
+  }, [queryClient, user])
 
-      if (typedError.response?.status === 401) {
-        setUser(null)
-        setAuthenticated(false)
-        setError("")
-        queryClient.removeQueries({ queryKey: AUTH_ME_QUERY_KEY, exact: true })
-      } else {
-        setUser(null)
-        setAuthenticated(false)
-        setError(getErrorMessage(authError))
-        queryClient.removeQueries({ queryKey: AUTH_ME_QUERY_KEY, exact: true })
-      }
-    } finally {
-      setLoading(false)
+  const setAuthenticatedState = useCallback((value: ((currentValue: boolean) => boolean) | boolean) => {
+    const nextValue = typeof value === "function" ? value(authenticated) : value
+
+    if (nextValue) {
+      void refreshAuth()
+      return
     }
-  }, [queryClient])
 
-  useEffect(() => {
-    void refreshAuth()
-  }, [refreshAuth])
+    queryClient.setQueryData(AUTH_ME_QUERY_KEY, null)
+  }, [authenticated, queryClient, refreshAuth])
 
-  // Interceptor: detectează 403 pe endpoint-uri de business când utilizatorul
+  const setErrorState = useCallback((_value: ((currentValue: string) => string) | string) => {
+    // Auth server-fetch error este derivată din query-ul /api/auth/me.
+  }, [])
+
+  // Handler: detectează 403 pe endpoint-uri de business când utilizatorul
   // este ACTIV în DB — semn că sesiunea nu conține autoritățile actualizate.
   useEffect(() => {
     apiClient.setBusinessForbiddenHandler(({ error, requestUrl }) => {
@@ -91,7 +93,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ loading, authenticated, user, error, refreshAuth, setUser, setAuthenticated, setError, startLogout }}>
+    <AuthContext.Provider value={{ loading, authenticated, user, error, refreshAuth, setUser: setUserState, setAuthenticated: setAuthenticatedState, setError: setErrorState, startLogout }}>
       {children}
     </AuthContext.Provider>
   )

@@ -1,10 +1,10 @@
 import { keepPreviousData, useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useCallback, useEffect, useMemo, useState } from "react"
 
-import { adaugaMesaj, creareConversatieSiMesaj, getIstoric, retryMesaj } from "@/features/study-tools/api/studyTools"
+import { adaugaMesaj, creareConversatieSiMesaj, getIstoric, retryMesaj } from "@/features/aky-chat/api/chat"
 
 import type { FormEvent } from "react"
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 
 import { buildUserMessage, normalizeHistoryResponse } from "../aky-chat.utils"
 import type { EntityId, MessageRecord, NewConversationResponse } from "../aky-chat.types"
@@ -159,7 +159,7 @@ export function useAkyMessages({ selectedCourseId, selectedConversationId, enabl
         void queryClient.invalidateQueries({ queryKey: getHistoryQueryKey(selectedConversationId) })
       }
     } catch (err: unknown) {
-      const typedError = err as AppAxiosError
+      const typedError = err as ApiError
       console.error("Nu s-a putut trimite mesajul:", err)
 
       if (typedError.response?.status === 429) {

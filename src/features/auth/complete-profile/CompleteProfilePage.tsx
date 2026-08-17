@@ -4,16 +4,16 @@ import { useMutation } from "@tanstack/react-query"
 import { z } from "zod"
 import { AlertCircle, Check } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import apiClient from "@/api/client"
 import { getApiErrorMessage, getApiFieldErrors } from "@/api/error-helpers"
 import { useAuth } from "@/auth/useAuth"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { submitCompleteProfile } from "@/features/auth/complete-profile/api/completeProfile"
 
 import type { FieldErrors } from "@/types/api"
-import type { CompleteProfileForm } from "@/types/app"
+import type { CompleteProfileForm } from "@/features/auth/complete-profile/complete-profile.types"
 
 const completeProfileLogo = "/assets/logo_bufnita.png"
 const akyRagLogo = "/assets/logo_RAG-removebg-preview.png"
@@ -24,15 +24,6 @@ const completeProfileSchema = z.object({
   facultate: z.string(),
   rolDorit: z.enum(["STUDENT", "PROFESOR"], { error: "Alege rolul dorit." }),
 })
-
-async function submitCompleteProfile(payload: CompleteProfileForm) {
-  await apiClient.post("/api/auth/complete-profile", {
-    nume: payload.nume.trim(),
-    prenume: payload.prenume.trim(),
-    facultate: payload.facultate.trim(),
-    rolDorit: payload.rolDorit,
-  })
-}
 
 export default function CompleteProfilePage() {
   const navigate = useNavigate()
@@ -57,7 +48,7 @@ export default function CompleteProfilePage() {
       nume: user?.nume ?? "",
       prenume: user?.prenume ?? "",
       facultate: user?.facultate ?? "",
-      rolDorit: "",
+      rolDorit: "" as CompleteProfileForm["rolDorit"],
     },
     validators: {
       onChange: completeProfileSchema,

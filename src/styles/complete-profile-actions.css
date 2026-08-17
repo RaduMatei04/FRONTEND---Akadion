@@ -1,0 +1,122 @@
+@layer components {
+  .auth-aky-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+    width: fit-content !important;
+    margin-left: auto !important;
+    margin-top: 0 !important;
+    margin-bottom: 1.25rem !important;
+    padding: 0.68rem 0.9rem 0.68rem 0.7rem !important;
+    cursor: default !important;
+    user-select: none !important;
+    background: rgba(255, 255, 255, 0.76) !important;
+    border: 1px solid rgba(36, 56, 91, 0.16) !important;
+    border-radius: 1.35rem !important;
+    box-shadow: 0 16px 42px rgba(32, 46, 84, 0.1) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+  }
+
+  .auth-aky-badge__logo-shell {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 3.65rem !important;
+    width: 3.65rem !important;
+    flex-shrink: 0 !important;
+    border-radius: 1.15rem !important;
+    border: 1px solid rgba(36, 56, 91, 0.14) !important;
+    background: linear-gradient(135deg, rgba(255, 253, 250, 0.98), rgba(247, 239, 230, 0.92)) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .auth-aky-badge__logo {
+    height: 3.15rem !important;
+    width: 3.15rem !important;
+    min-width: 3.15rem !important;
+    max-height: 3.15rem !important;
+    max-width: 3.15rem !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    object-fit: contain !important;
+  }
+
+  .auth-aky-badge__copy {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.05rem !important;
+    min-width: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .auth-aky-badge__eyebrow {
+    color: #7a819c !important;
+    font-size: 0.66rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.1 !important;
+    text-transform: uppercase !important;
+  }
+
+  .auth-aky-badge__title {
+    font-family: "Geist Variable", ui-sans-serif, system-ui, sans-serif !important;
+    font-size: 1.02rem !important;
+    font-weight: 600 !important;
+    color: #223349 !important;
+    text-transform: none !important;
+    letter-spacing: 0.025em !important;
+    line-height: 1.18 !important;
+  }
+
+  .auth-aky-badge__subtitle {
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    color: #4f5d83 !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+  }
+
+  .btn {
+    height: 3rem !important;
+    width: 100% !important;
+    padding-inline: 1rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    border-radius: 14px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    display: inline-flex !important;
+    transition: all 0.15s ease-out !important;
+    cursor: pointer !important;
+  }
+
+  .btn-primary {
+    color: #ffffff !important;
+    background-image: linear-gradient(90deg, #223349 0%, #595f8f 100%) !important;
+    box-shadow: 0 16px 28px -18px rgba(89, 95, 143, 0.4) !important;
+    border: none !important;
+  }
+
+  .btn-primary:hover {
+    background-image: linear-gradient(90deg, #1d2c3c 0%, #515783 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 20px 32px -16px rgba(89, 95, 143, 0.5) !important;
+  }
+
+  .btn-primary:active {
+    transform: translateY(0) !important;
+  }
+
+  .btn-block {
+    width: 100% !important;
+  }
+
+  .btn-lg {
+    height: 3rem !important;
+  }
+}

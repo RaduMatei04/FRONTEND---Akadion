@@ -1,0 +1,48 @@
+@layer components {
+  .complete-profile-page {
+    background: #f7f0e7;
+  }
+
+  .app-shell {
+    background:
+      radial-gradient(circle at top left, rgba(74, 86, 129, 0.08), transparent 24%),
+      linear-gradient(180deg, #f5eee5 0%, #fbf7f1 44%, #f8f2eb 100%);
+  }
+
+  .admin-users-page {
+    background:
+      radial-gradient(circle at top left, rgba(74, 86, 129, 0.08), transparent 22%),
+      linear-gradient(180deg, #f5eee5 0%, #f9f5ef 100%);
+  }
+
+  .admin-users-hero {
+    @apply grid gap-5 overflow-hidden rounded-[2rem] px-6 py-6 text-white shadow-[0_30px_80px_rgba(34,47,84,0.16)] lg:grid-cols-[1.2fr_0.8fr] lg:px-8 lg:py-8;
+    background:
+      radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 26%),
+      linear-gradient(145deg, #4a5681 0%, #44507a 58%, #303d63 100%);
+  }
+
+  .admin-users-hero-copy {
+    @apply flex flex-col gap-5;
+  }
+
+  .admin-users-logo-shell {
+    @apply flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white/92 p-1.5;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.2);
+  }
+
+  .admin-users-stat-card {
+    @apply flex min-h-32 flex-col justify-between rounded-[1.5rem] border border-white/12 bg-white/10 px-4 py-4 backdrop-blur-[1px];
+  }
+
+  .admin-users-surface {
+    background: rgba(252, 248, 243, 0.96);
+    border: 1px solid #e5d8ca;
+  }
+
+  .admin-user-entry {
+    @apply rounded-[1.5rem] border px-4 py-4 sm:px-5;
+    border-color: #e4d8cd;
+    background: linear-gradient(180deg, #fffdfa 0%, #f9f2ea 100%);
+  }
+}

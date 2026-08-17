@@ -2,45 +2,20 @@ import { useEffect, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { AlertCircle } from "lucide-react"
 import { useSearchParams } from "react-router-dom"
-import apiClient from "@/api/client"
 import { getApiErrorMessage } from "@/api/error-helpers"
+import type { UserState } from "@/auth/auth.types"
 import { USER_STATES, getAdminUserState, normalizeAdminFilter } from "@/auth/userState"
 import { useAuth } from "@/auth/useAuth"
 import AppShell from "@/app/layout/AppShell"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ADMIN_USERS_QUERY_KEY, adminUserActionSuccessMessages, listAdminUsers, runAdminUserAction } from "@/features/admin/users/api/adminUsers"
 import AdminUsersFilters from "@/features/admin/users/components/AdminUsersFilters"
 import AdminUsersList from "@/features/admin/users/components/AdminUsersList"
 
-import type { AppAxiosError } from "@/types/api"
-import type { AdminManagedUser, UserState } from "@/types/app"
+import type { ApiError } from "@/types/api"
 import { formatDateTime } from "@/lib/date"
 
 const ADMIN_USERS_PER_PAGE = 5
-const ADMIN_USERS_QUERY_KEY = ["admin", "users", "all"] as const
-
-const successMessages = {
-  approve: "Cererea a fost acceptată.",
-  reject: "Cererea a fost respinsă.",
-  deactivate: "Utilizatorul a fost dezactivat.",
-  activate: "Utilizatorul a fost reactivat.",
-}
-
-async function listAdminUsers() {
-  const response = await apiClient.get<AdminManagedUser[]>("/api/admin/users", {
-    params: { stare: "ALL" },
-  })
-
-  return Array.isArray(response.data) ? response.data : []
-}
-
-async function runAdminUserAction({ userId, action }: { userId: string | number; action: keyof typeof successMessages }) {
-  if (action === "approve" || action === "reject") {
-    await apiClient.patch(`/api/admin/users/${userId}/${action}`)
-    return
-  }
-
-  await apiClient.post(`/api/admin/users/${userId}/${action}`)
-}
 
 export default function AdminUsersPage() {
   const { refreshAuth } = useAuth()
@@ -64,11 +39,11 @@ export default function AdminUsersPage() {
   const adminUserActionMutation = useMutation({
     mutationFn: runAdminUserAction,
     onSuccess: async (_, variables) => {
-      setPageNotice(successMessages[variables.action] ?? "Acțiunea a fost aplicată.")
+      setPageNotice(adminUserActionSuccessMessages[variables.action] ?? "Acțiunea a fost aplicată.")
       await queryClient.invalidateQueries({ queryKey: ADMIN_USERS_QUERY_KEY })
     },
     onError: async (error: unknown) => {
-      const typedError = error as AppAxiosError
+      const typedError = error as ApiError
       if (typedError.response?.status === 401) {
         await refreshAuth()
       }
@@ -107,7 +82,7 @@ export default function AdminUsersPage() {
       return
     }
 
-    const typedError = usersError as AppAxiosError
+    const typedError = usersError as ApiError
     if (typedError.response?.status === 401) {
       void refreshAuth()
     }
@@ -120,7 +95,7 @@ export default function AdminUsersPage() {
     setSearchParams(state === "ALL" ? {} : { stare: state })
   }
 
-  function handleUserAction(userId: string | number | undefined, action: keyof typeof successMessages) {
+  function handleUserAction(userId: string | number | undefined, action: keyof typeof adminUserActionSuccessMessages) {
     if (!userId) {
       return
     }

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { AlertCircle, History } from "lucide-react"
+import AppShell from "@/app/layout/AppShell"
+import { useAuth } from "@/auth/useAuth"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertCircle, History } from "lucide-react"
-import apiClient from "@/api/client"
-import AppShell from "@/app/layout/AppShell"
-import { useAuth } from "@/auth/useAuth"
+import { listAuditLog } from "@/features/admin/audit-log/api/auditLog"
 
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 import { formatDateTimeParts } from "@/lib/date"
 
 const limitOptions = [10, 20, 50]
@@ -44,26 +44,6 @@ const creationActions = new Set(["CREARE"])
 const positiveActions = new Set(["ACTIVARE", "ÎNCĂRCARE", "PUBLICARE"])
 const destructiveActions = new Set(["ȘTERGERE", "STERGERE", "RESPINGERE", "EROARE"])
 const warningActions = new Set(["DEZACTIVARE", "ARHIVARE"])
-
-interface AuditLogEntry {
-  id: string | number
-  operatie?: string
-  numeTabel?: string
-  idInregistrare?: string | number
-  numeUtilizator?: string
-  emailUtilizator?: string
-  creatLa?: string
-  valoriVechi?: Record<string, unknown> | null
-  valoriNoi?: Record<string, unknown> | null
-}
-
-async function listAuditLog(limit: string) {
-  const response = await apiClient.get<{ content?: AuditLogEntry[] }>("/api/admin/audit-log", {
-    params: { size: limit },
-  })
-
-  return response.data?.content || []
-}
 
 function getDisplayAction(action) {
   if (!action) return "-"
@@ -136,7 +116,7 @@ export default function AdminAuditLogPage() {
       return
     }
 
-    const typedError = queryError as AppAxiosError
+    const typedError = queryError as ApiError
     if (typedError.response?.status === 401) {
       void refreshAuth()
     }

@@ -5,9 +5,9 @@ import { COURSE_THEME_KEYS, getCourseTheme, getThemeUserKey } from "@/lib/course
 import { getProfessorName } from "@/features/courses/lib/courseView"
 import type { CourseTab, CourseThemeKey } from "../course-detail.types"
 import type { CourseTheme } from "@/types/theme"
+import { useWeekActions } from "../weeks/hooks/useWeekActions"
 import { useCourseActions } from "./useCourseActions"
 import { useCourseDetailState } from "./useCourseDetailState"
-import { useWeekActions } from "./useWeekActions"
 
 export function useCourseDetailController() {
   const { courseId } = useParams()

@@ -6,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { startLogout } from "@/auth/logout"
 import { useAuth } from "@/auth/useAuth"
-import { getInitials, getRoleLabel, getUserDisplayName, isAdminUser } from "@/lib/user"
+import { getInitials, getRoleLabel, getUserDisplayName, isAdminUser } from "@/auth/user.utils"
 import { cn } from "@/lib/utils"
 
 const completeProfileLogo = "/logo_bufnita_transparenta.png"

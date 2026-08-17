@@ -5,7 +5,7 @@ import { useAuth } from "@/auth/useAuth"
 import AppShell from "@/app/layout/AppShell"
 import { Button } from "@/components/ui/button"
 import { LEGENDARY_OWLS, DEFAULT_STUDENT_HOMEPAGE_OWL, getStudentHomepageOwlId, markOwlHallDiscovered, setStudentHomepageOwlId } from "@/features/owl-hall/lib/legendaryOwls"
-import { isStudentUser } from "@/lib/user"
+import { isStudentUser } from "@/auth/user.utils"
 
 export default function OwlHall() {
   const { user } = useAuth()

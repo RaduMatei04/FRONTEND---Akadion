@@ -10,9 +10,9 @@ import AkyChatWidget from "@/features/aky-chat/AkyChatWidget"
 import DashboardStatCard from "@/features/dashboard/DashboardStatCard"
 import { useAuth } from "@/auth/useAuth"
 import { getAdminStats } from "@/features/courses/api/courses"
-import { getUserGreetingName } from "@/lib/user"
+import { getUserGreetingName } from "@/auth/user.utils"
 
-import type { AppAxiosError } from "@/types/api"
+import type { ApiError } from "@/types/api"
 import { AdminStats, ADMIN_DASHBOARD_QUERY_KEY, adminDashboardLogo } from "@/features/dashboard/dashboardConstants"
 
 export default function AdminDashboard() {
@@ -26,7 +26,7 @@ export default function AdminDashboard() {
     queryFn: getAdminStats,
   })
 
-  const typedError = queryError as AppAxiosError | null
+  const typedError = queryError as ApiError | null
   const hasSessionExpired = typedError?.response?.status === 401
 
   useEffect(() => {

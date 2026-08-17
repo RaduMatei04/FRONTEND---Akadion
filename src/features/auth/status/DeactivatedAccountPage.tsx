@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { startLogout } from "@/auth/logout"
-import StatusPage from "@/pages/StatusPage"
+import StatusPage from "@/features/auth/status/StatusPage"
 
 export default function DeactivatedAccountPage() {
   return (

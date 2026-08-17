@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/useAuth"
-import { isAdminUser, isProfessorUser } from "@/lib/user"
+import { isAdminUser, isProfessorUser } from "@/auth/user.utils"
 import AdminDashboard from "@/features/dashboard/AdminDashboard"
 import ProfessorDashboard from "@/features/dashboard/ProfessorDashboard"
 import StudentDashboard from "@/features/dashboard/StudentDashboard"

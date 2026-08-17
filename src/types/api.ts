@@ -45,6 +45,3 @@ export class ApiError extends Error {
 export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError
 }
-
-export type AppApiError = ApiError
-export type AppAxiosError = ApiError

@@ -46,3 +46,16 @@ export interface QuizGenerationResponse {
   incercareId?: string | number
   intrebari?: QuizQuestionRecord[]
 }
+
+export interface QuizAttempt {
+  id?: string | number
+  scor?: number
+  createdAt?: string
+  [key: string]: unknown
+}
+
+export interface QuizResult {
+  scor?: number
+  total?: number
+  [key: string]: unknown
+}

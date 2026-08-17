@@ -19,7 +19,7 @@ import {
   listStudentWeekDocuments,
   listWeekDocuments,
 } from "@/features/courses/api/courses"
-import { isAdminUser, isProfessorUser, isStudentUser } from "@/lib/user"
+import { isAdminUser, isProfessorUser, isStudentUser } from "@/auth/user.utils"
 import {
   formatInputDate,
   normalizeStudentAvailableCourse,
@@ -38,7 +38,7 @@ import type {
   WeekFeedbackMap,
   WeekRecord,
 } from "../course-detail.types"
-import type { AppAxiosError, FieldErrors } from "@/types/api"
+import type { ApiError, FieldErrors } from "@/types/api"
 import type { Course } from "@/types/course"
 import type { AuthUser } from "@/types/user"
 
@@ -173,7 +173,7 @@ export function useCourseDetailState() {
     try {
       return await request()
     } catch (error: unknown) {
-      const typedError = error as AppAxiosError
+      const typedError = error as ApiError
       if (typedError.response?.status === 401) {
         await refreshAuth()
       }
@@ -200,7 +200,7 @@ export function useCourseDetailState() {
       return
     }
 
-    const typedError = workflowError as AppAxiosError
+    const typedError = workflowError as ApiError
     if (typedError.response?.status === 401) {
       void refreshAuth()
     }

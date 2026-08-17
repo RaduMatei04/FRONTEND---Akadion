@@ -1,11 +1,10 @@
 import type { ReactNode } from "react"
 import { Navigate } from "react-router-dom"
+import type { RequireAuthenticatedStateProps } from "@/auth/auth.types"
 import { AuthErrorPage, LoadingPage, LoginRedirect } from "@/auth/route-shells"
 import { useAuth } from "@/auth/useAuth"
 import { routeByState, getActiveHomeRoute } from "@/auth/userState"
-import { isAdminUser, isProfessorUser } from "@/lib/user"
-
-import type { RequireAuthenticatedStateProps } from "@/types/app"
+import { isAdminUser, isProfessorUser } from "@/auth/user.utils"
 import { AccessDeniedPage } from "@/pages/AccessDeniedPage"
 
 export function RequireAuthenticatedState({ allowedStates, children }: RequireAuthenticatedStateProps) {

@@ -1,0 +1,272 @@
+@layer components {
+  .complete-profile-layout {
+    @apply grid min-h-screen lg:grid-cols-[0.95fr_1.15fr];
+  }
+
+  .complete-profile-brand-panel {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    padding: 0 !important;
+    background: radial-gradient(circle at 0 0, rgba(255, 255, 255, 0.1), transparent 26%), linear-gradient(150deg, #4a5681 0%, #4a5681 56%, #4a5681 100%);
+  }
+
+  .complete-profile-brand-panel::before,
+  .complete-profile-brand-panel::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(0.5px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 9999px;
+  }
+
+  .complete-profile-brand-panel::before {
+    top: clamp(3rem, 8vh, 5rem);
+    left: clamp(2rem, 8%, 4.5rem);
+    width: 15rem;
+    height: 15rem;
+    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.22) 46%, rgba(255, 255, 255, 0.1) 72%);
+  }
+
+  .complete-profile-brand-panel::after {
+    right: clamp(2rem, 8%, 5rem);
+    bottom: clamp(2.5rem, 8vh, 5rem);
+    width: 20rem;
+    height: 20rem;
+    background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.19) 48%, rgba(255, 255, 255, 0.08) 74%);
+  }
+
+  .complete-profile-brand-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 100vh;
+    padding-inline: 1.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 0;
+  }
+
+  @media (min-width: 640px) {
+    .complete-profile-brand-content {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .complete-profile-brand-content {
+      padding-inline: 3rem;
+      padding-top: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .complete-profile-brand-content {
+      padding-inline: 3.5rem;
+    }
+  }
+
+  .complete-profile-form-panel {
+    @apply flex items-center justify-center px-4 py-8 sm:px-6 lg:px-10 lg:py-10 xl:px-14;
+  }
+
+  .complete-profile-card {
+    @apply relative w-full max-w-xl overflow-hidden rounded-[1.75rem] bg-[#fcf8f3] px-6 pt-5 pb-6 shadow-[0_24px_60px_rgba(108,84,53,0.12)] sm:px-8 sm:pt-6 sm:pb-7;
+    border: 1px solid #e5d8ca;
+  }
+
+  .complete-profile-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #223349 0%, #595f8f 60%, #fed9b0 100%);
+  }
+
+  .complete-profile-eyebrow {
+    @apply inline-flex rounded-full border px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-slate-500;
+    background: #f6eee4;
+    border-color: #e5d8ca;
+  }
+
+  .complete-profile-stepper {
+    @apply mb-8 flex items-center gap-3 sm:mb-10;
+  }
+
+  .complete-profile-stepper-item {
+    @apply flex items-center gap-3 text-sm;
+  }
+
+  .complete-profile-stepper-item.is-current {
+    @apply font-semibold text-slate-900;
+  }
+
+  .complete-profile-stepper-item.is-completed {
+    @apply font-medium text-slate-500;
+  }
+
+  .complete-profile-stepper-badge {
+    @apply flex h-10 w-10 items-center justify-center rounded-full bg-[#24385b] text-white shadow-sm;
+  }
+
+  .complete-profile-stepper-state {
+    @apply block text-xs;
+  }
+
+  .complete-profile-stepper-item.is-current .complete-profile-stepper-state {
+    @apply text-slate-500;
+  }
+
+  .complete-profile-stepper-item.is-completed .complete-profile-stepper-state {
+    @apply text-slate-400;
+  }
+
+  .complete-profile-stepper-connector {
+    @apply h-px flex-1 bg-slate-300;
+  }
+
+  @media (max-width: 640px) {
+    .complete-profile-layout {
+      @apply block;
+    }
+
+    .complete-profile-brand-content {
+      @apply min-h-0;
+    }
+  }
+
+  .complete-profile-brand-content .brand-header {
+    width: 100%;
+  }
+
+  .complete-profile-brand-content .brand-header__left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .complete-profile-brand-content .brand-header__copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .complete-profile-brand-content .brand-logo {
+    height: 18rem;
+    width: 18rem;
+    border-radius: 1rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.22));
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .complete-profile-brand-content .brand-logo:hover {
+    transform: translateY(-10px) scale(1.03);
+    filter: drop-shadow(0 35px 65px rgba(0, 0, 0, 0.38)) brightness(1.05);
+  }
+
+  .complete-profile-brand-content .brand-caption {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.65);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+    display: block;
+  }
+
+  .complete-profile-brand-content .brand-copy--single {
+    margin-top: 2.5rem;
+    gap: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .complete-profile-brand-content .brand-title {
+    font-size: 2.25rem;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .complete-profile-brand-content .brand-description {
+    font-size: 1rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 32rem;
+    margin: 0;
+  }
+
+  .complete-profile-brand-content .brand-benefits {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .complete-profile-brand-content .brand-benefit-card {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    box-shadow: 0 14px 28px -24px rgba(9, 17, 33, 0.6);
+    transition: transform 0.15s ease-out, background 0.15s ease-out;
+  }
+
+  .complete-profile-brand-content .brand-benefit-card:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .complete-profile-brand-content .brand-benefit-card__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    height: 2rem;
+    width: 2rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .complete-profile-brand-content .brand-benefit-card__icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .complete-profile-brand-content .brand-benefit-card__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    line-height: 1.2;
+    min-width: 0;
+  }
+}
