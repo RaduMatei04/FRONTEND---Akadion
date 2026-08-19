@@ -169,7 +169,7 @@ export default function CourseWeeksTab({
       <div className="space-y-5">
         {weeks.map((week) => {
           const documents = documentsByWeek[week.id] ?? []
-          const isExpanded = expandedWeekIds[week.id] ?? false
+          const isExpanded = isStudent ? true : (expandedWeekIds[week.id] ?? false)
 
           return (
             <WeekCard

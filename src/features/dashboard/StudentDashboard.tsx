@@ -17,7 +17,7 @@ import { DEFAULT_COURSE_THEME } from "@/lib/courseThemes"
 
 import type { ApiError } from "@/types/api"
 import type { Course } from "@/types/course"
-import { heroStatsBadgeClassName, heroStatsLabelClassName, heroStatsSecondaryDotClassName, heroStatsValueClassName, STUDENT_DASHBOARD_QUERY_KEY, studentDashboardLogo } from "@/features/dashboard/dashboardConstants"
+import { STUDENT_DASHBOARD_QUERY_KEY, studentDashboardLogo } from "@/features/dashboard/dashboardConstants"
 
 export default function StudentDashboard() {
   const { user, refreshAuth } = useAuth()
@@ -95,13 +95,13 @@ export default function StudentDashboard() {
   return (
     <AppShell
       title={`Salut, ${getUserGreetingName(user)}!`}
+      description="Gata de învățat?"
       eyebrow={homepageOwlRole}
-      heroClassName="relative min-h-[11rem] overflow-visible border-0 bg-linear-to-r from-[#0f9fbd] via-[#17b7d3] to-[#56d5ea] text-white shadow-[0_24px_60px_rgba(23,133,161,0.24)] lg:items-start before:absolute before:-top-12 before:right-[-3.5rem] before:h-56 before:w-56 before:rounded-full before:bg-white/16 before:content-[''] after:absolute after:-bottom-20 after:left-[-4.5rem] after:h-64 after:w-64 after:rounded-full after:bg-white/10 after:content-['']"
+      heroClassName="relative min-h-[11rem] overflow-visible border-0 bg-linear-to-r from-[#434f9f] via-[#5869bd] to-[#7c89dc] text-white shadow-[0_24px_60px_rgba(67,79,159,0.26)] lg:items-start before:absolute before:-top-12 before:right-[-3.5rem] before:h-56 before:w-56 before:rounded-full before:bg-white/14 before:content-[''] after:absolute after:-bottom-20 after:left-[-4.5rem] after:h-64 after:w-64 after:rounded-full after:bg-white/10 after:content-['']"
       heroEyebrowClassName="text-white/72"
       heroTitleClassName="text-white"
       heroDescriptionClassName="text-white/84"
-      heroContent={<div className="mt-3.5 flex flex-wrap items-center gap-2.5"><div className={heroStatsBadgeClassName}><span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(110,231,183,0.8)]" /><span className={heroStatsLabelClassName}>Cursurile mele:</span><span className={heroStatsValueClassName}>{loading ? "..." : courses.length}</span></div><div className={heroStatsBadgeClassName}><span className={`h-2 w-2 rounded-full ${heroStatsSecondaryDotClassName}`} /><span className={heroStatsLabelClassName}>Cursuri disponibile:</span><span className={heroStatsValueClassName}>{loading ? "..." : availableCourses.length}</span></div></div>}
-      heroVisual={<div className="pointer-events-auto relative flex h-full w-full flex-col items-end justify-end"><img src={homepageOwlImage} alt="Dashboard student" className="h-full max-h-full w-auto origin-bottom translate-y-[8%] cursor-pointer object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.22)] transition-all duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03] hover:brightness-105 hover:drop-shadow-[0_35px_65px_rgba(0,0,0,0.38)] active:scale-[1.03] active:brightness-105 active:drop-shadow-[0_35px_65px_rgba(0,0,0,0.38)]" />{hasUnlockedOwlHall ? <Button asChild variant="outline" className="absolute right-2 -bottom-12 rounded-2xl border-white/28 bg-white px-5 py-2.5 text-sm font-semibold text-[#24385b] shadow-[0_14px_34px_rgba(8,18,38,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-white/90 hover:text-[#24385b] hover:shadow-[0_20px_42px_rgba(8,18,38,0.24)] active:scale-[0.98]"><Link to="/owl-hall">Schimbă Avatar</Link></Button> : null}</div>}
+      heroVisual={<div className="pointer-events-auto relative flex h-full w-full flex-col items-end justify-end"><img src={homepageOwlImage} alt="Dashboard student" className="h-full max-h-full w-auto origin-bottom translate-y-[8%] cursor-pointer object-contain object-bottom transition-all duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03] hover:brightness-105 hover:drop-shadow-[0_35px_65px_rgba(0,0,0,0.38)] active:scale-[1.03] active:brightness-105 active:drop-shadow-[0_35px_65px_rgba(0,0,0,0.38)]" />{hasUnlockedOwlHall ? <Button asChild variant="outline" className="absolute right-2 -bottom-12 rounded-2xl border-white/28 bg-white px-5 py-2.5 text-sm font-semibold text-[#24385b] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:bg-white/90 hover:text-[#24385b] hover:shadow-[0_2px_6px_rgba(8,18,38,0.05)] active:scale-[0.98]"><Link to="/owl-hall">Schimbă Avatar</Link></Button> : null}</div>}
       heroVisualClassName="right-2 bottom-0 top-auto h-full items-end justify-center lg:right-5"
     >
       <div className="space-y-6">

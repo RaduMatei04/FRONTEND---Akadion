@@ -14,25 +14,19 @@ export default function ProfileSidebar({ initials, displayName, roleLabel, email
     <div className="space-y-6 lg:flex lg:h-full lg:flex-col lg:space-y-0">
       <Card className="overflow-hidden rounded-[1.75rem] border-[#e4d8cd] bg-white shadow-[0_18px_48px_rgba(32,46,84,0.08)]">
         <div className="border-b border-[#e4d8cd] bg-[#fcf8f3] px-5 py-5 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#24385b] text-xl font-bold text-white shadow-xs">{initials}</div>
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#4A5681] text-xl font-bold text-white shadow-xs">{initials}</div>
           <h2 className="mt-3 truncate text-lg font-bold text-slate-900">{displayName}</h2>
-          <span className="mt-1.5 inline-flex items-center rounded-full bg-[#24385b]/10 px-3 py-0.5 text-xs font-bold tracking-wide uppercase text-[#24385b]">{roleLabel}</span>
+          <span className="mt-1.5 inline-flex items-center rounded-full bg-[#4A5681]/10 px-3 py-0.5 text-xs font-bold tracking-wide uppercase text-[#4A5681]">{roleLabel}</span>
         </div>
-        <CardContent className="space-y-3 p-4">
-          <div className="flex items-center gap-3 rounded-[1.25rem] border border-[#e4d8cd] bg-[#fcf8f3] px-3.5 py-3">
+        <CardContent className="space-y-4 p-4">
+          <div className="flex items-center gap-3 px-1 py-1">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[#f5eee5] text-xl" aria-hidden="true">📧</span>
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-slate-400">Email</p>
-              <p className="truncate text-sm font-semibold text-slate-800">{email}</p>
-            </div>
+            <p className="truncate text-sm font-semibold text-slate-800">{email}</p>
           </div>
           {faculty ? (
-            <div className="flex items-center gap-3 rounded-[1.25rem] border border-[#e4d8cd] bg-[#fcf8f3] px-3.5 py-3">
+            <div className="flex items-center gap-3 px-1 py-1">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[#f5eee5] text-xl" aria-hidden="true">🎓</span>
-              <div className="min-w-0">
-                <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-slate-400">Facultate</p>
-                <p className="truncate text-sm font-semibold text-slate-800">{faculty}</p>
-              </div>
+              <p className="truncate text-sm font-semibold text-slate-800">{faculty}</p>
             </div>
           ) : null}
         </CardContent>

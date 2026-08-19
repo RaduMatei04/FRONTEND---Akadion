@@ -6,6 +6,7 @@ export interface CourseTheme {
   accent: string
   swatch: string
   text: string
+  titleColor: string
   tabActive: string
   tabInactive: string
   badge: string

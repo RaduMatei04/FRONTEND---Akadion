@@ -55,7 +55,7 @@ export default function AkyChatPanel({
         </div>
       ) : null}
 
-      {!selectedCourseId ? <AkyCourseSelectView selectedTheme={selectedTheme} courses={courses} selectedCourseId={selectedCourseId} setSelectedCourseId={setSelectedCourseId} /> : null}
+      {!selectedCourseId ? <AkyCourseSelectView courses={courses} selectedCourseId={selectedCourseId} setSelectedCourseId={setSelectedCourseId} /> : null}
 
       {selectedCourseId ? (
         <>

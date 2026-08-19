@@ -1,4 +1,4 @@
-import { AlertCircle, Loader2, Sparkles } from "lucide-react"
+import { AlertCircle, CircleHelp, Loader2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -55,7 +55,7 @@ export default function QuizConfigurationCard(props: QuizConfigurationCardProps)
         <div className="flex items-start gap-4">
           <div className="flex items-start gap-4">
             <div className={cn("flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.6rem] bg-linear-to-br text-white shadow-[0_14px_32px_rgba(32,46,84,0.16)]", theme.accent)}>
-              <Sparkles className="h-7 w-7" />
+              <CircleHelp className="h-7 w-7" />
             </div>
             <div className="space-y-1.5">
               <p className={cn("text-sm font-semibold uppercase tracking-[0.22em]", theme.sectionLabel)}>Configurare Quiz</p>
@@ -105,7 +105,7 @@ export default function QuizConfigurationCard(props: QuizConfigurationCardProps)
 
         <div className="pt-2">
           <Button type="button" onClick={() => void onStart()} disabled={isPending || !selectedCourseId} className={cn("min-w-[13rem] rounded-2xl px-6 text-white", theme.btnPrimaryBg, theme.btnPrimaryHover)}>
-            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Generează quiz
           </Button>
         </div>

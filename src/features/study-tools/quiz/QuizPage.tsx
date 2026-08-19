@@ -1,4 +1,4 @@
-import { Loader2, Menu, Sparkles } from "lucide-react"
+import { CircleHelp, Loader2, Menu } from "lucide-react"
 import AppShell from "@/app/layout/AppShell"
 import AkyChatWidget from "@/features/aky-chat/AkyChatWidget"
 import StudyToolsThemePicker from "@/features/study-tools/components/StudyToolsThemePicker"
@@ -73,7 +73,7 @@ export default function QuizPage() {
             {!controller.generateQuizMutation.isPending && !controller.selectedHistoryAttempt && controller.quizQuestions.length === 0 && !controller.quizError ? (
               <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
                 <div className={cn("flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-[2rem] shadow-[0_14px_30px_rgba(32,46,84,0.08)]", theme.iconBg, theme.iconText)}>
-                  <Sparkles className="h-8 w-8" />
+                  <CircleHelp className="h-8 w-8" />
                 </div>
                 <h3 className="text-2xl font-semibold text-slate-900">Aky e gata de examen, tu?</h3>
               </div>
@@ -82,7 +82,7 @@ export default function QuizPage() {
             {!controller.generateQuizMutation.isPending && controller.selectedHistoryAttempt && !controller.currentQuestion ? (
               <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
                 <div className={cn("flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-[2rem] shadow-[0_14px_30px_rgba(32,46,84,0.08)]", theme.iconBg, theme.iconText)}>
-                  <Sparkles className="h-8 w-8" />
+                  <CircleHelp className="h-8 w-8" />
                 </div>
                 <h3 className="text-2xl font-semibold text-slate-900">Încercarea nu mai are întrebări disponibile.</h3>
               </div>

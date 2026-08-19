@@ -46,7 +46,7 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
   const [view, setView] = useState<ChatView>("list")
   const [filterMode, setFilterMode] = useState<FilterMode>("course")
 
-  const { selectedTheme, themePickerOpen, setThemePickerOpen, themePickerRef, handleThemeChange } = useAkyThemePreference(user)
+  const { selectedTheme } = useAkyThemePreference(user)
   const { setPanelWidth, historyVisible, setHistoryVisible, isResizing, handlePanelResizePointerDown, handleHistoryResizePointerDown, panelStyle } =
     useAkyResizableLayout(open)
 
@@ -136,9 +136,6 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
       setPanelWidth(AKY_PANEL_MIN_WIDTH)
     }
     setOpen(nextOpen)
-    if (!nextOpen) {
-      setThemePickerOpen(false)
-    }
   }
 
   function handleScrollConversations(event: UIEvent<HTMLDivElement>) {
@@ -222,10 +219,6 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
               selectedTheme={selectedTheme}
               view={view}
               activeCourseTitle={activeCourseTitle}
-              themePickerOpen={themePickerOpen}
-              setThemePickerOpen={setThemePickerOpen}
-              themePickerRef={themePickerRef}
-              onThemeChange={handleThemeChange}
               onBackToList={() => {
                 if (!courseId) {
                   setSelectedCourseId(null)

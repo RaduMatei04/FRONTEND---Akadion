@@ -18,7 +18,7 @@ export default function PersonalInfoCard({ profileForm, profileErrors, updatePro
   return (
     <Card className="rounded-[1.75rem] border-[#e4d8cd] bg-white shadow-[0_18px_48px_rgba(32,46,84,0.08)]">
       <CardHeader className="px-6 pb-2 pt-6">
-        <CardTitle className="flex items-center gap-2 text-xl font-bold text-slate-900"><UserRound className="h-5 w-5 text-[#24385b]" />Informații personale</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-xl font-bold text-slate-900"><UserRound className="h-5 w-5 text-[#4A5681]" />Informații personale</CardTitle>
         <CardDescription>Actualizează-ți numele, prenumele și facultatea.</CardDescription>
       </CardHeader>
       <CardContent className="px-6 pb-6 pt-3">
@@ -29,7 +29,7 @@ export default function PersonalInfoCard({ profileForm, profileErrors, updatePro
               <profileForm.Field name="nume">
                 {(field) => (
                   <>
-                    <Input id="profile-nume" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("nume") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10" />
+                     <Input id="profile-nume" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("nume") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#4A5681] focus-visible:ring-[#4A5681]/10" />
                     {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
                     {profileErrors.nume ? <p className="text-sm text-rose-600">{profileErrors.nume}</p> : null}
                   </>
@@ -42,7 +42,7 @@ export default function PersonalInfoCard({ profileForm, profileErrors, updatePro
               <profileForm.Field name="prenume">
                 {(field) => (
                   <>
-                    <Input id="profile-prenume" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("prenume") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10" />
+                     <Input id="profile-prenume" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("prenume") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#4A5681] focus-visible:ring-[#4A5681]/10" />
                     {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
                     {profileErrors.prenume ? <p className="text-sm text-rose-600">{profileErrors.prenume}</p> : null}
                   </>
@@ -56,7 +56,7 @@ export default function PersonalInfoCard({ profileForm, profileErrors, updatePro
             <profileForm.Field name="facultate">
               {(field) => (
                 <>
-                  <Input id="profile-facultate" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("facultate") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#24385b] focus-visible:ring-[#24385b]/10" />
+                   <Input id="profile-facultate" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); clearProfileError("facultate") }} className="h-12 rounded-2xl border-[#e4d8cd] bg-[#fcf8f3] px-4 text-base focus-visible:border-[#4A5681] focus-visible:ring-[#4A5681]/10" />
                   {profileErrors.facultate ? <p className="text-sm text-rose-600">{profileErrors.facultate}</p> : null}
                 </>
               )}
@@ -64,7 +64,7 @@ export default function PersonalInfoCard({ profileForm, profileErrors, updatePro
           </div>
 
           <div className="pt-2">
-            <Button type="submit" disabled={updateProfileMutationPending} className="rounded-2xl bg-[#24385b] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#1a2b47]">
+            <Button type="submit" disabled={updateProfileMutationPending} className="rounded-2xl bg-[#4A5681] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#424D73]">
               {updateProfileMutationPending ? "Se salvează..." : "Salvează modificările"}
             </Button>
           </div>

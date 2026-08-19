@@ -1,4 +1,4 @@
-import { Loader2, Sparkles } from "lucide-react"
+import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -46,9 +46,6 @@ export default function FlashcardsDeckView(props: FlashcardsDeckViewProps) {
 
         {!isPending && flashcardQuestions.length === 0 && !flashcardError ? (
           <div className="flex flex-col items-center justify-center gap-4 py-12 text-center">
-            <div className={cn("flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-[2rem] shadow-[0_14px_30px_rgba(32,46,84,0.08)]", theme.iconBg, theme.iconText)}>
-              <Sparkles className="h-8 w-8" />
-            </div>
             <h3 className="text-2xl font-semibold text-slate-900">Pregătește un set de fișe</h3>
           </div>
         ) : null}

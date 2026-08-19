@@ -1,4 +1,4 @@
-import { Check, Palette, Sparkles } from "lucide-react"
+import { Check, Palette } from "lucide-react"
 import { COURSE_THEMES } from "@/lib/courseThemes"
 import { cn } from "@/lib/utils"
 
@@ -36,7 +36,7 @@ export default function StudyToolsThemePicker({ currentTheme, isOpen, setIsOpen,
                     <span className={cn("h-5 w-5 shrink-0 rounded-full", theme.swatch)} />
                     <span className="whitespace-nowrap">{theme.label}</span>
                   </span>
-                  {isSelected ? <Check className="h-4 w-4 shrink-0" /> : <Sparkles className="h-4 w-4 shrink-0 opacity-0" />}
+                  {isSelected ? <Check className="h-4 w-4 shrink-0" /> : null}
                 </button>
               )
             })}

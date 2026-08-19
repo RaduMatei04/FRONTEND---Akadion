@@ -254,6 +254,7 @@ export default function CourseDetailPage() {
                 professorEmail={professorEmail}
                 professorFaculty={professorFaculty}
                 getInitials={getInitials}
+                isStudent={isStudent}
               />
             ) : null}
 

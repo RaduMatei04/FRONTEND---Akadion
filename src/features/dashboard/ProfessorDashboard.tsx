@@ -16,7 +16,7 @@ import { DEFAULT_COURSE_THEME } from "@/lib/courseThemes"
 
 import type { ApiError } from "@/types/api"
 import type { Course } from "@/types/course"
-import { getActiveCourseCounts, heroStatsBadgeClassName, heroStatsLabelClassName, heroStatsSecondaryDotClassName, heroStatsValueClassName, PROFESSOR_DASHBOARD_QUERY_KEY, professorDashboardLogo } from "@/features/dashboard/dashboardConstants"
+import { PROFESSOR_DASHBOARD_QUERY_KEY, professorDashboardLogo } from "@/features/dashboard/dashboardConstants"
 
 export default function ProfessorDashboard() {
   const { user, refreshAuth } = useAuth()
@@ -42,19 +42,18 @@ export default function ProfessorDashboard() {
 
   const error = queryError ? getCourseErrorMessage(queryError, "Nu am putut încărca cursurile tale.") : ""
 
-  const courseCounts = getActiveCourseCounts(courses)
   const activeCourses = courses.filter((course) => course.activ)
   const inactiveCourses = courses.filter((course) => !course.activ)
 
   return (
     <AppShell
       title={`Salut, ${getUserGreetingName(user)}!`}
+      description="Ce predăm azi?"
       eyebrow="Dashboard PROFESOR"
-      heroClassName="relative min-h-[11rem] overflow-hidden border-0 bg-linear-to-r from-[#0f9fbd] via-[#17b7d3] to-[#56d5ea] text-white shadow-[0_24px_60px_rgba(23,133,161,0.24)] lg:items-start before:absolute before:-top-12 before:right-[-3.5rem] before:h-56 before:w-56 before:rounded-full before:bg-white/16 before:content-[''] after:absolute after:-bottom-20 after:left-[-4.5rem] after:h-64 after:w-64 after:rounded-full after:bg-white/10 after:content-['']"
+      heroClassName="relative min-h-[11rem] overflow-hidden border-0 bg-linear-to-r from-[#434f9f] via-[#5869bd] to-[#7c89dc] text-white shadow-[0_24px_60px_rgba(67,79,159,0.26)] lg:items-start before:absolute before:-top-12 before:right-[-3.5rem] before:h-56 before:w-56 before:rounded-full before:bg-white/14 before:content-[''] after:absolute after:-bottom-20 after:left-[-4.5rem] after:h-64 after:w-64 after:rounded-full after:bg-white/10 after:content-['']"
       heroEyebrowClassName="text-white/72"
       heroTitleClassName="text-white"
       heroDescriptionClassName="text-white/84"
-      heroContent={<div className="mt-3.5 flex flex-wrap items-center gap-2.5"><div className={heroStatsBadgeClassName}><span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_8px_rgba(110,231,183,0.8)]" /><span className={heroStatsLabelClassName}>Cursuri active:</span><span className={heroStatsValueClassName}>{loading ? "..." : `${courseCounts.active}/${courseCounts.total}`}</span></div><div className={heroStatsBadgeClassName}><span className={`h-2 w-2 rounded-full ${heroStatsSecondaryDotClassName}`} /><span className={heroStatsLabelClassName}>Cursuri inactive:</span><span className={heroStatsValueClassName}>{loading ? "..." : `${courseCounts.inactive}/${courseCounts.total}`}</span></div></div>}
       heroVisual={<img src={professorDashboardLogo} alt="Dashboard profesor" className="pointer-events-auto h-full max-h-full w-auto origin-bottom translate-y-[7.5%] cursor-pointer object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.22)] transition-all duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03] hover:brightness-105 hover:drop-shadow-[0_35px_65px_rgba(0,0,0,0.38)] active:scale-[1.03] active:brightness-105 active:drop-shadow-[0_35px_65px_rgba(0,0,0,0.38)]" />}
       heroVisualClassName="right-2 bottom-0 top-auto h-full items-end justify-center lg:right-5"
     >

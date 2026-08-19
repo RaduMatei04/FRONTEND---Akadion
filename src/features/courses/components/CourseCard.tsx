@@ -53,6 +53,7 @@ export default function CourseCard({ course, mode, selectedThemeKey, onThemeChan
   const isStudentMode = mode === "student"
   const isEnrolledStudentCourse = isStudentMode && course.inscris
   const progress = getCourseProgress(course)
+  const titleColorClassName = isAdminMode ? "text-[#24385b]" : selectedTheme.titleColor
 
   useEffect(() => {
     if (!themePickerOpen) {
@@ -86,18 +87,16 @@ export default function CourseCard({ course, mode, selectedThemeKey, onThemeChan
 
   return (
     <Card className={`relative overflow-visible rounded-[1.8rem] border-[#e4d8cd] bg-white/96 shadow-[0_18px_52px_rgba(32,46,84,0.08)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_60px_rgba(32,46,84,0.12)] ${themePickerOpen ? "z-20" : "z-0"}`}>
-      <div className={`relative h-44 overflow-hidden rounded-t-[1.8rem] bg-linear-to-br ${accent}`}>
-        <div className={`absolute left-4 top-4 inline-flex items-center rounded-full px-3.5 py-1 text-xs font-bold shadow-xs border ${selectedTheme.badge || "bg-white/80 text-slate-800 border-white/60"}`}>
+      <CardContent className="space-y-3 px-5 py-5">
+        <div className={`inline-flex items-center rounded-full px-3.5 py-1 text-xs font-bold shadow-xs border ${selectedTheme.badge || "bg-white/80 text-slate-800 border-white/60"}`}>
           {isStudentMode ? (course.inscris ? "Înscris" : "Disponibil") : course.activ ? "Activ" : "Inactiv"}
         </div>
-      </div>
-      <CardContent className="space-y-3 px-5 py-5">
         {(isProfessorMode || isAdminMode || isEnrolledStudentCourse) ? (
           <Link to={`/courses/${course.id}`} state={{ course }} className="block">
-            <h3 className="text-[1.35rem] font-semibold tracking-tight text-[#24385b] transition hover:font-extrabold">{course.denumire}</h3>
+            <h3 className={`text-[1.35rem] font-semibold tracking-tight transition hover:font-extrabold ${titleColorClassName}`}>{course.denumire}</h3>
           </Link>
         ) : (
-          <h3 className="text-[1.35rem] font-semibold tracking-tight text-[#24385b]">{course.denumire}</h3>
+          <h3 className={`text-[1.35rem] font-semibold tracking-tight ${titleColorClassName}`}>{course.denumire}</h3>
         )}
         {(isStudentMode || isAdminMode) ? (
           isEnrolledStudentCourse ? (
@@ -143,7 +142,7 @@ export default function CourseCard({ course, mode, selectedThemeKey, onThemeChan
               <Link to={`/courses/${course.id}`} state={{ course }}>Vezi cursul</Link>
             </Button>
           ) : onEnroll ? (
-            <Button type="button" onClick={() => onEnroll(course)} disabled={actionDisabled} className="mt-2 rounded-2xl bg-[#3f698a] text-white hover:bg-[#355b79]">
+            <Button type="button" onClick={() => onEnroll(course)} disabled={actionDisabled} className="mt-2 rounded-2xl bg-[#4A5681] text-white hover:bg-[#424D73]">
               Înscriere
             </Button>
           ) : null

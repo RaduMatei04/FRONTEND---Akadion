@@ -76,7 +76,7 @@ export default function AppShell({ title, description, eyebrow = "Akadion", acti
   return (
     <main className={cn("app-shell min-h-screen text-slate-900", shellClassName)}>
       {hideHeader ? null : (
-        <header className="sticky top-0 z-30 border-b border-[#e7d9c8]/80 bg-[#fbf7f1]/92 backdrop-blur-xl">
+        <header className="sticky top-0 z-30 border-b border-[#4A5681]/20 bg-[#fbf7f1]/92 backdrop-blur-xl">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
             <Link to={homePath} className="-my-3 flex items-center shrink-0">
               <img src={completeProfileLogo} alt="Akadion" className="h-16 w-auto object-contain" />
@@ -94,7 +94,7 @@ export default function AppShell({ title, description, eyebrow = "Akadion", acti
                 className="h-12 rounded-2xl border-[#d9ccbe] bg-white px-2.5 pr-3 text-slate-700 hover:bg-[#f8f3ed]"
                 aria-expanded={accountOpen}
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#24385b] text-xs font-semibold text-white">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#4A5681] text-xs font-semibold text-white">
                   {initials}
                 </span>
                 <span className="min-w-0 text-left">
@@ -109,7 +109,7 @@ export default function AppShell({ title, description, eyebrow = "Akadion", acti
                   <Link
                     to="/profile"
                     onClick={() => setAccountOpen(false)}
-                    className="flex items-center gap-2 rounded-2xl px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-[#f7efe6] hover:text-[#24385b]"
+                    className="flex items-center gap-2 rounded-2xl px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-[#f7efe6] hover:text-[#4A5681]"
                   >
                     <UserRound className="h-4 w-4" />
                     Profilul meu
@@ -117,7 +117,7 @@ export default function AppShell({ title, description, eyebrow = "Akadion", acti
                   <Link
                     to="/discover-aky"
                     onClick={() => setAccountOpen(false)}
-                    className="flex items-center gap-2 rounded-2xl px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-[#f7efe6] hover:text-[#24385b]"
+                    className="flex items-center gap-2 rounded-2xl px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-[#f7efe6] hover:text-[#4A5681]"
                   >
                     <Bot className="h-4 w-4" />
                     Descoperă Aky
@@ -125,7 +125,7 @@ export default function AppShell({ title, description, eyebrow = "Akadion", acti
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-semibold text-slate-700 transition hover:bg-[#f7efe6] hover:text-[#24385b]"
+                    className="flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-semibold text-slate-700 transition hover:bg-[#f7efe6] hover:text-[#4A5681]"
                   >
                     <LogOut className="h-4 w-4" />
                     Logout
@@ -147,7 +147,7 @@ export default function AppShell({ title, description, eyebrow = "Akadion", acti
               </div>
               <div className="mx-auto mt-3 max-w-7xl rounded-2xl border border-[#e7d9c8] bg-white px-3 py-3">
                 <div className="mb-3 flex min-w-0 items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#24385b] text-sm font-semibold text-white">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#4A5681] text-sm font-semibold text-white">
                     {initials}
                   </span>
                   <div className="min-w-0">

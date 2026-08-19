@@ -1,6 +1,4 @@
 import { AlertCircle, FileText, RotateCcw } from "lucide-react"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
 
 import { cn } from "@/lib/utils"
 
@@ -8,6 +6,7 @@ import type { CourseTheme } from "@/types/theme"
 
 import { formatTime } from "../aky-chat.utils"
 import type { EntityId, MessageRecord } from "../aky-chat.types"
+import AkyMarkdown from "./AkyMarkdown"
 
 interface AkyMessageItemProps {
   message: MessageRecord
@@ -29,9 +28,7 @@ export default function AkyMessageItem({ message, theme, onRetry }: AkyMessageIt
         )}
       >
         <div className="whitespace-pre-wrap font-sans text-sm markdown-body">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
-            {message.continut ?? ""}
-          </ReactMarkdown>
+          <AkyMarkdown>{message.continut ?? ""}</AkyMarkdown>
         </div>
 
         {!isUser && typeof message.surseFolosite === "string" && message.surseFolosite ? (

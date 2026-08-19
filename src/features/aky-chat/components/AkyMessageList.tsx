@@ -58,7 +58,7 @@ export default function AkyMessageList({
   return (
     <div className="flex flex-1 flex-col overflow-y-auto px-6 py-5" onScroll={handleScrollMessages}>
       {messages.length === 0 && !isLoadingMessages ? (
-        <AkyWelcomeCard theme={theme} activeCourseTitle={activeCourseTitle} onQuickQuestion={onQuickQuestion} />
+        <AkyWelcomeCard activeCourseTitle={activeCourseTitle} onQuickQuestion={onQuickQuestion} />
       ) : null}
 
       {isLoadingMessages ? (

@@ -9,9 +9,10 @@ interface ProfessorInfoCardProps {
   professorEmail: string
   professorFaculty: string
   getInitials: (value: unknown, fallback?: string) => string
+  isStudent?: boolean
 }
 
-export default function ProfessorInfoCard({ theme, professorName, professorEmail, professorFaculty, getInitials }: ProfessorInfoCardProps) {
+export default function ProfessorInfoCard({ theme, professorName, professorEmail, professorFaculty, getInitials, isStudent = false }: ProfessorInfoCardProps) {
   return (
     <Card className={cn("mx-auto w-full max-w-[25rem] overflow-hidden rounded-[1.65rem] border bg-white shadow-sm", theme.heroBorder)}>
       <CardContent className="flex flex-col p-0">
@@ -28,7 +29,7 @@ export default function ProfessorInfoCard({ theme, professorName, professorEmail
         </div>
 
         <div className="flex flex-col justify-center gap-3 bg-white px-5 py-5 text-left sm:px-6 sm:py-6">
-          <div className="flex items-center gap-3 rounded-[1.25rem] border border-[#e4d8cd] bg-[#fcf8f3] px-3.5 py-3">
+          <div className={cn("flex items-center gap-3", isStudent ? "" : "rounded-[1.25rem] border border-[#e4d8cd] bg-[#fcf8f3] px-3.5 py-3")}>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[#f5eee5] text-xl" aria-hidden="true">📧</span>
             <div className="min-w-0">
               <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-slate-400">Email</p>
@@ -36,7 +37,7 @@ export default function ProfessorInfoCard({ theme, professorName, professorEmail
             </div>
           </div>
 
-          <div className="flex items-center gap-3 rounded-[1.25rem] border border-[#e4d8cd] bg-[#fcf8f3] px-3.5 py-3">
+          <div className={cn("flex items-center gap-3", isStudent ? "" : "rounded-[1.25rem] border border-[#e4d8cd] bg-[#fcf8f3] px-3.5 py-3")}>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[#f5eee5] text-xl" aria-hidden="true">🎓</span>
             <div className="min-w-0">
               <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-slate-400">Facultate</p>

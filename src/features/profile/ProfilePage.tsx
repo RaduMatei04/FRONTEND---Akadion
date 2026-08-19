@@ -6,22 +6,20 @@ import AppShell from "@/app/layout/AppShell"
 import { isAdminUser, getInitials, getRoleLabel, getUserDisplayName } from "@/auth/user.utils"
 import { useAuth } from "@/auth/useAuth"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { requestMyPasswordReset, updateMyEmail, updateMyProfile } from "@/features/profile/api/profile"
+import { requestMyPasswordReset, updateMyProfile } from "@/features/profile/api/profile"
 import PersonalInfoCard from "@/features/profile/components/PersonalInfoCard"
 import ProfileSidebar from "@/features/profile/components/ProfileSidebar"
 import SecurityCard from "@/features/profile/components/SecurityCard"
 import { adminHeroClassName, profileLogo, userHeroClassName } from "@/features/profile/profile.constants"
-import { emailSchema, profileSchema } from "@/features/profile/profile.schemas"
+import { profileSchema } from "@/features/profile/profile.schemas"
 import { getProfileErrorMessage, getProfileFieldErrors } from "@/features/profile/profile.utils"
 
 import type { FieldErrors } from "@/types/api"
 
 export default function ProfilePage() {
-  const { user, setUser, refreshAuth } = useAuth()
+  const { user, setUser } = useAuth()
   const isAdmin = isAdminUser(user)
   const [profileErrors, setProfileErrors] = useState<FieldErrors>({})
-  const [emailErrors, setEmailErrors] = useState<FieldErrors>({})
-  const [emailError, setEmailError] = useState("")
   const [notice, setNotice] = useState("")
   const [error, setError] = useState("")
   const [passwordResetNotice, setPasswordResetNotice] = useState("")
@@ -37,22 +35,6 @@ export default function ProfilePage() {
     onError: (submitError: unknown) => {
       setProfileErrors(getProfileFieldErrors(submitError))
       setError(getProfileErrorMessage(submitError, "Nu am putut actualiza datele personale."))
-    },
-  })
-
-  const updateEmailMutation = useMutation({
-    mutationFn: updateMyEmail,
-    onSuccess: async (updatedUser) => {
-      if (updatedUser) {
-        setUser(updatedUser)
-      } else {
-        await refreshAuth()
-      }
-      setNotice("Adresa de email a fost actualizată cu succes.")
-    },
-    onError: (submitError: unknown) => {
-      setEmailErrors(getProfileFieldErrors(submitError))
-      setEmailError(getProfileErrorMessage(submitError, "Nu am putut schimba adresa de email."))
     },
   })
 
@@ -79,30 +61,11 @@ export default function ProfilePage() {
     },
   })
 
-  const emailForm = useForm({
-    defaultValues: {
-      email: user?.mail ?? "",
-    },
-    validators: {
-      onChange: emailSchema,
-    },
-    onSubmit: async ({ value }) => {
-      setNotice("")
-      setError("")
-      setPasswordResetNotice("")
-      setPasswordResetError("")
-      setEmailErrors({})
-      setEmailError("")
-      await updateEmailMutation.mutateAsync(value.email.trim())
-    },
-  })
-
   useEffect(() => {
     profileForm.setFieldValue("nume", user?.nume ?? "")
     profileForm.setFieldValue("prenume", user?.prenume ?? "")
     profileForm.setFieldValue("facultate", user?.facultate ?? "")
-    emailForm.setFieldValue("email", user?.mail ?? "")
-  }, [emailForm, profileForm, user])
+  }, [profileForm, user])
 
   async function handlePasswordReset() {
     setSendingPasswordReset(true)
@@ -118,8 +81,6 @@ export default function ProfilePage() {
       setSendingPasswordReset(false)
     }
   }
-
-  const emailChanged = emailForm.state.values.email.trim() !== (user?.mail ?? "")
   const displayName = getUserDisplayName(user)
   const roleLabel = getRoleLabel(user?.rol)
   const initials = getInitials(displayName)
@@ -128,11 +89,6 @@ export default function ProfilePage() {
 
   function clearProfileError(field: string) {
     setProfileErrors((currentErrors) => ({ ...currentErrors, [field]: "" }))
-  }
-
-  function clearEmailError() {
-    setEmailErrors((currentErrors) => ({ ...currentErrors, email: "" }))
-    setEmailError("")
   }
 
   return (
@@ -166,7 +122,7 @@ export default function ProfilePage() {
 
           <div className="space-y-6">
             <PersonalInfoCard profileForm={profileForm} profileErrors={profileErrors} updateProfileMutationPending={updateProfileMutation.isPending} clearProfileError={clearProfileError} />
-            <SecurityCard emailForm={emailForm} emailErrors={emailErrors} emailError={emailError} emailChanged={emailChanged} updateEmailMutationPending={updateEmailMutation.isPending} clearEmailError={clearEmailError} passwordResetNotice={passwordResetNotice} passwordResetError={passwordResetError} sendingPasswordReset={sendingPasswordReset} handlePasswordReset={handlePasswordReset} />
+            <SecurityCard email={user?.mail || "-"} passwordResetNotice={passwordResetNotice} passwordResetError={passwordResetError} sendingPasswordReset={sendingPasswordReset} handlePasswordReset={handlePasswordReset} />
           </div>
         </div>
       </div>

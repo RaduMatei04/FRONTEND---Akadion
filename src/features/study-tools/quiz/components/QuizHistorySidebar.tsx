@@ -1,4 +1,4 @@
-import { AlertCircle, Loader2, Sparkles, Trash2, X } from "lucide-react"
+import { AlertCircle, Loader2, Trash2, X } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -31,7 +31,7 @@ export default function QuizHistorySidebar(props: QuizHistorySidebarProps) {
       </div>
 
       <div className="space-y-4 border-b border-[#e4d8cd] px-5 py-4">
-        <Button type="button" onClick={() => { handleResetQuiz(); setHistoryError("") }} className={cn("w-full rounded-2xl text-white shadow-md", theme.btnPrimaryBg, theme.btnPrimaryHover)}><Sparkles className="mr-2 h-4 w-4" />Quiz nou</Button>
+        <Button type="button" onClick={() => { handleResetQuiz(); setHistoryError("") }} className={cn("w-full rounded-2xl text-white shadow-md", theme.btnPrimaryBg, theme.btnPrimaryHover)}>Quiz nou</Button>
         <div className="flex items-center justify-between gap-3 px-1">
           <p className="text-[11px] font-bold tracking-[0.18em] text-slate-400 uppercase">Încercări salvate</p>
           <button type="button" onClick={() => { void refetchQuizHistory() }} className="text-xs font-semibold text-slate-500 transition hover:text-[#24385b]">Reîmprospătează</button>

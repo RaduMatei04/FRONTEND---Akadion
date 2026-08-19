@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronDown, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import WeekDescriptionEditor from "./WeekDescriptionEditor"
 import WeekDocumentList from "./WeekDocumentList"
 import WeekDocumentUploadForm from "./WeekDocumentUploadForm"
+import { StatusBadge } from "../components/CourseDetailTabs"
 import { formatDocumentsCount } from "../course-detail.utils"
 import type {
   DocumentRecord,
@@ -70,17 +71,15 @@ export default function WeekCard({
   onDeleteDocument,
   onRetryDocument,
 }: WeekCardProps) {
+  const showStudentExpandedContent = isStudent
+
   return (
-    <Card id={`course-week-${week.id}`} className={`scroll-mt-28 overflow-hidden rounded-[1.75rem] bg-white/94 shadow-[0_18px_48px_rgba(32,46,84,0.08)] ${isStudent && week.finalizata ? "border-emerald-200" : "border-[#e4d8cd]"}`}>
+    <Card id={`course-week-${week.id}`} className={`scroll-mt-28 overflow-hidden rounded-[1.75rem] bg-white/94 shadow-[0_18px_48px_rgba(32,46,84,0.08)] ${isStudent && week.finalizata ? "border-[#9fd0d8]" : "border-[#e4d8cd]"}`}>
       <div className="flex flex-col gap-4 border-b border-[#eadfd4] bg-[#fffdfa] px-5 py-5 sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex min-w-0 flex-1 items-start gap-3">
-            <button
-              type="button"
-              onClick={() => onToggleExpand(week.id)}
-              className="flex min-w-0 flex-1 items-start gap-4 text-left"
-            >
-              <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-semibold", isStudent && week.finalizata ? "bg-emerald-100 text-emerald-700" : cn(theme.weekNumBg, theme.weekNumText))}>
+            <div className="flex min-w-0 flex-1 items-start gap-4 text-left">
+              <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-semibold", theme.weekNumBg, theme.weekNumText)}>
                 S{week.nrSaptamana}
               </div>
               <div className="min-w-0 flex-1">
@@ -93,16 +92,14 @@ export default function WeekCard({
                     </Button>
                   ) : null}
                   {isStudent && week.finalizata ? (
-                    <span className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
-                      Finalizată
-                    </span>
+                    <StatusBadge className="border-[#2F9E7A] bg-[#DDF5EC] text-[#2F9E7A]">FINALIZATĂ</StatusBadge>
                   ) : null}
                 </div>
                 <p className="mt-1 line-clamp-2 text-sm leading-6 text-slate-600">
                   {week.descriere || "Fără descriere pentru această săptămână."}
                 </p>
               </div>
-            </button>
+            </div>
           </div>
 
           <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 sm:pl-4">
@@ -111,18 +108,21 @@ export default function WeekCard({
             </div>
             {isStudent ? (
               <Button type="button" variant="outline" onClick={() => onToggleCompletion(week)} disabled={Boolean(activeAction) || !courseInscris} className={cn("rounded-2xl border bg-white", theme.btnIconBorder, theme.sectionTitle)}>
-                <CheckCircle2 className="h-4 w-4" />
                 {activeAction === `toggle-week-${week.id}` ? "Se actualizează..." : week.finalizata ? "Marchează neparcursă" : "Marchează finalizată"}
               </Button>
             ) : null}
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onToggleExpand(week.id)}
-              className={cn("h-11 w-11 rounded-2xl border p-0", theme.btnIconBg, theme.btnIconBorder, theme.btnIconText)}
-            >
-              <ChevronDown className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-            </Button>
+            {!showStudentExpandedContent ? (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => onToggleExpand(week.id)}
+                className={cn("h-11 w-11 rounded-2xl border p-0", theme.btnIconBg, theme.btnIconBorder, theme.btnIconText)}
+              >
+                <svg className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </Button>
+            ) : null}
           </div>
         </div>
       </div>
