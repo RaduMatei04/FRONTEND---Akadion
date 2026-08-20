@@ -115,7 +115,7 @@ export default function CourseDetailPage() {
           <Trash2 className="h-4 w-4" />
           Retragere
         </Button>
-      ) : canEdit && course ? (
+      ) : canEdit && course && !isAdmin ? (
         <Button
           type="button"
           variant="outline"
@@ -131,7 +131,7 @@ export default function CourseDetailPage() {
           {activeAction === "toggle-course" ? "Se actualizează..." : course.activ ? "Dezactivează" : "Reactivează"}
         </Button>
       ) : null}
-      sideContent={!pageLoading && course && courseIndexOpen && !isProfessor ? (
+      sideContent={!pageLoading && course && courseIndexOpen && !isProfessor && !isAdmin ? (
         <CourseIndexPanel
           weeks={weeks}
           documentsByWeek={documentsByWeek}
@@ -149,7 +149,7 @@ export default function CourseDetailPage() {
       <div className="space-y-6">
         {!pageLoading && course ? (
           <>
-            {!courseIndexOpen && !isProfessor ? (
+            {!courseIndexOpen && !isProfessor && !isAdmin ? (
               <button
                 type="button"
                 onClick={handleOpenCourseIndex}
@@ -195,7 +195,7 @@ export default function CourseDetailPage() {
 
         {!pageLoading && course ? (
           <>
-            {canEdit ? (
+            {canEdit && !isAdmin ? (
               <CourseEditorCard
                 course={course}
                 courseEditorOpen={courseEditorOpen}
@@ -216,11 +216,12 @@ export default function CourseDetailPage() {
                 weeks={weeks}
                 documentsByWeek={documentsByWeek}
                 expandedWeekIds={expandedWeekIds}
-                 canEdit={canEdit}
-                 isStudent={isStudent}
-                 isProfessor={isProfessor}
-                 courseInscris={courseInscris}
-                 activeAction={activeAction}
+                canEdit={canEdit}
+                isAdmin={isAdmin}
+                isStudent={isStudent}
+                isProfessor={isProfessor}
+                courseInscris={courseInscris}
+                activeAction={activeAction}
                 theme={theme}
                 lastWeekNumber={lastWeekNumber}
                 newWeekOpen={newWeekOpen}

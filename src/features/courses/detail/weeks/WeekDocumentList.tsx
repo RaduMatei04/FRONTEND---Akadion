@@ -22,6 +22,7 @@ interface WeekDocumentListProps {
   week: WeekRecord
   documents: DocumentRecord[]
   canEdit: boolean
+  isAdmin: boolean
   isProfessor: boolean
   activeAction: string
   theme: CourseTheme
@@ -118,6 +119,7 @@ export default function WeekDocumentList({
   week,
   documents,
   canEdit,
+  isAdmin,
   isProfessor,
   activeAction,
   theme,
@@ -128,6 +130,8 @@ export default function WeekDocumentList({
   onDeleteDocument,
   onRetryDocument,
 }: WeekDocumentListProps) {
+  const usesSimplifiedStatusUi = isProfessor || isAdmin
+
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
@@ -145,12 +149,12 @@ export default function WeekDocumentList({
       ) : null}
 
       {documents.map((document) => {
-        const canRetryIngest = canEdit && !isProfessor && canRetryDocumentIngest(document)
+        const canRetryIngest = canEdit && !usesSimplifiedStatusUi && canRetryDocumentIngest(document)
         const isEditing = Boolean(editingDocumentIds[document.id])
         const currentFilename = extractFilename(document.urlDescarcare)
         const previewUrl = getDocumentHref(document)
         const rawStatusLabel = getDocumentStatusLabel(document)
-        const displayStatusLabel = isProfessor && rawStatusLabel === "ERONAT" ? "NEPROCESAT" : rawStatusLabel
+        const displayStatusLabel = usesSimplifiedStatusUi && rawStatusLabel === "ERONAT" ? "NEPROCESAT" : rawStatusLabel
 
         return (
           <article key={document.id} className="rounded-3xl border border-[#e4d8cd] bg-white overflow-hidden">
@@ -182,7 +186,7 @@ export default function WeekDocumentList({
                       )}
                     </div>
                   ) : null}
-                  {!isProfessor && document.statusIndex === "ERONAT" && (
+                  {!usesSimplifiedStatusUi && document.statusIndex === "ERONAT" && (
                     <p className="mt-1 text-xs text-amber-600 font-medium">⚠ Fișier stocat, dar neindexat în AI. Apasă "Reîncearcă indexarea" pentru conectarea cu serviciul RAG.</p>
                   )}
                 </div>

@@ -23,6 +23,7 @@ interface WeekCardProps {
   documents: DocumentRecord[]
   isExpanded: boolean
   canEdit: boolean
+  isAdmin: boolean
   isStudent: boolean
   isProfessor: boolean
   courseInscris: boolean
@@ -51,6 +52,7 @@ export default function WeekCard({
   documents,
   isExpanded,
   canEdit,
+  isAdmin,
   isStudent,
   isProfessor,
   courseInscris,
@@ -73,6 +75,7 @@ export default function WeekCard({
   onDeleteDocument,
   onRetryDocument,
 }: WeekCardProps) {
+  const canManageWeekContent = canEdit && !isAdmin
   const showStudentExpandedContent = isStudent
 
   return (
@@ -87,7 +90,7 @@ export default function WeekCard({
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-xl font-semibold text-slate-900">Săptămâna {week.nrSaptamana}</h3>
-                  {canEdit && isLastWeek ? (
+                  {canManageWeekContent && isLastWeek ? (
                     <Button type="button" variant="outline" onClick={() => onDeleteWeek(week)} disabled={Boolean(activeAction)} className="h-9 rounded-2xl border-rose-200 bg-rose-50 px-3 text-rose-700 hover:bg-rose-100">
                       <Trash2 className="h-4 w-4" />
                       Șterge
@@ -131,7 +134,7 @@ export default function WeekCard({
 
       {isExpanded ? (
         <CardContent className="space-y-6 px-5 py-5 sm:px-6 sm:py-6">
-          {canEdit ? (
+          {canManageWeekContent ? (
             <WeekDescriptionEditor
               week={week}
               initialDescription={week.descriere ?? ""}
@@ -142,7 +145,7 @@ export default function WeekCard({
             />
           ) : null}
 
-          {canEdit ? (
+          {canManageWeekContent ? (
             <WeekDocumentUploadForm
               week={week}
               error={uploadErrors[week.id] ?? ""}
@@ -155,13 +158,14 @@ export default function WeekCard({
             />
           ) : null}
 
-            <WeekDocumentList
-              week={week}
-              documents={documents}
-              canEdit={canEdit}
-              isProfessor={isProfessor}
-              activeAction={activeAction}
-              theme={theme}
+          <WeekDocumentList
+            week={week}
+            documents={documents}
+            canEdit={canManageWeekContent}
+            isAdmin={isAdmin}
+            isProfessor={isProfessor}
+            activeAction={activeAction}
+            theme={theme}
             editingDocumentIds={editingDocumentIds}
             setEditingDocumentIds={setEditingDocumentIds}
             documentFileInputRefs={documentFileInputRefs}

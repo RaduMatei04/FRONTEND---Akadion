@@ -1,5 +1,6 @@
 import { useForm } from "@tanstack/react-form"
-import { ChevronDown, FileText, Plus } from "lucide-react"
+import { useState } from "react"
+import { AlertCircle, ChevronDown, FileText, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card"
 import { cn, formatWeeks } from "@/lib/utils"
@@ -24,6 +25,7 @@ interface CourseWeeksTabProps {
   documentsByWeek: DocumentsByWeekMap
   expandedWeekIds: ExpandedStateMap
   canEdit: boolean
+  isAdmin: boolean
   isStudent: boolean
   isProfessor: boolean
   courseInscris: boolean
@@ -55,6 +57,7 @@ export default function CourseWeeksTab({
   documentsByWeek,
   expandedWeekIds,
   canEdit,
+  isAdmin,
   isStudent,
   isProfessor,
   courseInscris,
@@ -80,6 +83,8 @@ export default function CourseWeeksTab({
   uploadFileInputRefs,
   documentFileInputRefs,
 }: CourseWeeksTabProps) {
+  const canManageCourseContent = canEdit && !isAdmin
+  const [newWeekSubmitAttempted, setNewWeekSubmitAttempted] = useState(false)
   const newWeekForm = useForm({
     defaultValues: {
       descriere: "",
@@ -90,14 +95,18 @@ export default function CourseWeeksTab({
     onSubmit: async ({ value, formApi }) => {
       const created = await onCreateWeek(value.descriere)
       if (created) {
+        setNewWeekSubmitAttempted(false)
         formApi.reset()
       }
     },
   })
 
+  const isNewWeekFormInvalid = !newWeekForm.state.values.descriere.trim()
+  const showNewWeekValidationMessage = newWeekSubmitAttempted && isNewWeekFormInvalid
+
   return (
     <div className="space-y-6">
-      {canEdit ? (
+      {canManageCourseContent ? (
         <Card className="gap-0 overflow-hidden rounded-[1.75rem] border-[#e4d8cd] bg-white/92 py-0 shadow-[0_18px_48px_rgba(32,46,84,0.08)]">
           <button
             type="button"
@@ -119,6 +128,10 @@ export default function CourseWeeksTab({
                 className="space-y-4"
                 onSubmit={(event) => {
                   event.preventDefault()
+                  setNewWeekSubmitAttempted(true)
+                  if (isNewWeekFormInvalid) {
+                    return
+                  }
                   void newWeekForm.handleSubmit()
                 }}
               >
@@ -132,10 +145,15 @@ export default function CourseWeeksTab({
                         placeholder="Descrierea săptămânii"
                         className="min-h-24 w-full rounded-2xl border border-[#e4d8cd] bg-[#f7efe6] px-4 py-3 text-base text-slate-900 outline-none placeholder:text-slate-400 focus:border-[#24385b] focus:ring-2 focus:ring-[#24385b]/10"
                       />
-                      {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
                     </>
                   )}
                 </newWeekForm.Field>
+                {showNewWeekValidationMessage ? (
+                  <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-white/80 px-4 py-3 text-amber-900 shadow-[0_12px_30px_rgba(148,101,42,0.08)]">
+                    <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
+                    <p className="text-sm font-semibold leading-6 text-amber-800">Completați toate câmpurile obligatorii</p>
+                  </div>
+                ) : null}
                 <Button type="submit" disabled={Boolean(activeAction)} className={cn("rounded-2xl text-white", theme.btnPrimaryBg, theme.btnPrimaryHover)}>
                   <Plus className="h-4 w-4" />
                   {activeAction === "create-week" ? "Se adaugă..." : "Adaugă săptămâna"}
@@ -179,7 +197,8 @@ export default function CourseWeeksTab({
               week={week}
               documents={documents}
               isExpanded={isExpanded}
-              canEdit={canEdit}
+              canEdit={canManageCourseContent}
+              isAdmin={isAdmin}
               isStudent={isStudent}
               isProfessor={isProfessor}
               courseInscris={courseInscris}

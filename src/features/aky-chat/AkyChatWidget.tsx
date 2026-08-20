@@ -224,7 +224,6 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
                   handleScrollConversations={handleScrollConversations}
                   courseId={courseId}
                   filterMode={filterMode}
-                  onFilterChange={setFilterMode}
                   isLoadingConversations={isLoadingConversations}
                   conversatii={conversatii}
                   courses={courses}

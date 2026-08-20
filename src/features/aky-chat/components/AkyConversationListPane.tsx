@@ -21,7 +21,6 @@ interface AkyConversationListPaneProps {
   handleScrollConversations: (event: UIEvent<HTMLDivElement>) => void
   courseId: EntityId | null
   filterMode: FilterMode
-  onFilterChange: (filterMode: FilterMode) => void
   isLoadingConversations: boolean
   conversatii: ConversationRecord[]
   courses: CourseOption[]
@@ -42,7 +41,6 @@ export default function AkyConversationListPane(props: AkyConversationListPanePr
     handleScrollConversations,
     courseId,
     filterMode,
-    onFilterChange,
     isLoadingConversations,
     conversatii,
     courses,
@@ -75,13 +73,8 @@ export default function AkyConversationListPane(props: AkyConversationListPanePr
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 pt-2 space-y-3" onScroll={handleScrollConversations}>
-        <div className="flex items-center justify-between px-1 pb-1">
+        <div className="px-1 pb-1">
           <h3 className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Istoric Conversații</h3>
-          {courseId ? (
-            <div className="flex gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200/60">
-              <button type="button" onClick={() => onFilterChange("course")} className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all ${filterMode === "course" ? "bg-white text-[#1e3a5f] shadow-xs" : "text-slate-500 hover:text-slate-800"}`}>Acest curs</button>
-            </div>
-          ) : null}
         </div>
 
         {isLoadingConversations ? (

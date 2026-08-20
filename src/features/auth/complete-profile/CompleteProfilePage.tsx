@@ -28,8 +28,9 @@ const completeProfileSchema = z.object({
 export default function CompleteProfilePage() {
   const navigate = useNavigate()
   const { user, refreshAuth } = useAuth()
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [, setFieldErrors] = useState<FieldErrors>({})
   const [submitError, setSubmitError] = useState("")
+  const [submitAttempted, setSubmitAttempted] = useState(false)
 
   const completeProfileMutation = useMutation({
     mutationFn: submitCompleteProfile,
@@ -59,6 +60,9 @@ export default function CompleteProfilePage() {
       await completeProfileMutation.mutateAsync(value)
     },
   })
+
+  const isProfileFormInvalid = !form.state.values.nume.trim() || !form.state.values.prenume.trim() || !form.state.values.rolDorit
+  const showProfileValidationMessage = submitAttempted && isProfileFormInvalid
 
   const profileSteps = [
     { id: 1, label: "Cont", stateText: "Pasul 1 finalizat", state: "completed" },
@@ -186,6 +190,10 @@ export default function CompleteProfilePage() {
                 className="space-y-4"
                 onSubmit={(event) => {
                   event.preventDefault()
+                  setSubmitAttempted(true)
+                  if (isProfileFormInvalid) {
+                    return
+                  }
                   void form.handleSubmit()
                 }}
               >
@@ -204,8 +212,6 @@ export default function CompleteProfilePage() {
                       {(field) => (
                         <>
                           <Input id="last-name" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); setFieldErrors((current) => ({ ...current, nume: "" })); setSubmitError("") }} placeholder="Ex: Popescu" className="h-12 rounded-xl border-[#d8dcef] bg-[#fef9f3] px-4 text-sm shadow-none placeholder:text-slate-400 focus-visible:border-[#595f8f] focus-visible:ring-[#595f8f]/10" />
-                          {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
-                          {fieldErrors.nume ? <p className="text-sm text-rose-600">{fieldErrors.nume}</p> : null}
                         </>
                       )}
                     </form.Field>
@@ -216,8 +222,6 @@ export default function CompleteProfilePage() {
                       {(field) => (
                         <>
                           <Input id="first-name" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); setFieldErrors((current) => ({ ...current, prenume: "" })); setSubmitError("") }} placeholder="Ex: Andrei" className="h-12 rounded-xl border-[#d8dcef] bg-[#fef9f3] px-4 text-sm shadow-none placeholder:text-slate-400 focus-visible:border-[#595f8f] focus-visible:ring-[#595f8f]/10" />
-                          {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
-                          {fieldErrors.prenume ? <p className="text-sm text-rose-600">{fieldErrors.prenume}</p> : null}
                         </>
                       )}
                     </form.Field>
@@ -230,7 +234,6 @@ export default function CompleteProfilePage() {
                     {(field) => (
                       <>
                         <Input id="faculty" value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { field.handleChange(event.target.value); setFieldErrors((current) => ({ ...current, facultate: "" })); setSubmitError("") }} placeholder="Ex: Facultatea de Informatică" className="h-12 rounded-xl border-[#d8dcef] bg-[#fef9f3] px-4 text-sm shadow-none placeholder:text-slate-400 focus-visible:border-[#595f8f] focus-visible:ring-[#595f8f]/10" />
-                        {fieldErrors.facultate ? <p className="text-sm text-rose-600">{fieldErrors.facultate}</p> : null}
                       </>
                     )}
                   </form.Field>
@@ -255,13 +258,18 @@ export default function CompleteProfilePage() {
                               </label>
                             )
                           })}
-                          {field.state.meta.errors[0] ? <p className="text-sm text-rose-600">{String(field.state.meta.errors[0])}</p> : null}
-                          {fieldErrors.rolDorit ? <p className="text-sm text-rose-600">{fieldErrors.rolDorit}</p> : null}
                         </>
                       )}
                     </form.Field>
                   </div>
                 </fieldset>
+
+                {showProfileValidationMessage ? (
+                  <Alert className="rounded-2xl border-amber-200 bg-white/80 px-4 py-3 text-amber-900 shadow-[0_12px_30px_rgba(148,101,42,0.08)]">
+                    <AlertCircle className="mt-0.5 h-4 w-4 text-amber-700" />
+                    <AlertDescription className="text-sm font-semibold leading-6 text-amber-800">Completați toate câmpurile obligatorii</AlertDescription>
+                  </Alert>
+                ) : null}
 
                 <Alert className="rounded-2xl border-[#d8dcef] bg-[#fbf6f0] px-4 py-3 text-slate-700">
                   <AlertCircle className="mt-0.5 h-4 w-4 text-[#24385b]" />
