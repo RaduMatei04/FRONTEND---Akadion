@@ -98,34 +98,10 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
     resetMessages()
     setSelectedConversationId(null)
     setView("list")
+    setFilterMode(courseId ? "course" : "all")
     setSelectedCourseId(courseId)
     void queryClient.invalidateQueries({ queryKey: AKY_CONVERSATIONS_QUERY_KEY })
   }, [open, courseId, queryClient, resetMessages])
-
-  useEffect(() => {
-    if (!open || !courseId || filterMode !== "course") return
-
-    const firstPage = conversationsQuery.data?.pages[0]
-    if (!firstPage || firstPage.items.length > 0) return
-
-    let cancelled = false
-
-    void (async () => {
-      try {
-        const globalResponse = await getConversatiiGlobale(0)
-        const globalItems = Array.isArray(globalResponse) ? globalResponse : (globalResponse.continut ?? [])
-        if (!cancelled && globalItems.length > 0) {
-          setFilterMode("all")
-        }
-      } catch (err) {
-        console.error("Failed to load global conversations", err)
-      }
-    })()
-
-    return () => {
-      cancelled = true
-    }
-  }, [open, courseId, filterMode, conversationsQuery.data])
 
   if (isAdmin) {
     return null
@@ -154,17 +130,23 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
   }
 
   function handleNewConversation() {
+    resetActiveConversation()
+  }
+
+  function resetActiveConversation() {
     setSelectedConversationId(null)
     if (!courseId) {
       setSelectedCourseId(null)
     }
-    akyMessages.resetMessages()
+    resetMessages()
     setView("chat")
   }
 
   async function handleDeleteConversation(conversationId: EntityId | null | undefined, event: MouseEvent<HTMLButtonElement>) {
     if (conversationId == null) return
     event.stopPropagation()
+
+    const isDeletingActiveConversation = selectedConversationId === conversationId
 
     try {
       await deleteConversationMutation.mutateAsync(conversationId)
@@ -173,8 +155,8 @@ export default function AkyChatWidget({ courseId = null, courseTitle = null, ena
         return { ...currentData, pages: currentData.pages.map((page) => ({ ...page, items: page.items.filter((conversatie) => conversatie.id !== conversationId) })) }
       })
       void queryClient.invalidateQueries({ queryKey: AKY_CONVERSATIONS_QUERY_KEY, refetchType: "none" })
-      if (selectedConversationId === conversationId) {
-        setView("list")
+      if (isDeletingActiveConversation) {
+        resetActiveConversation()
       }
     } catch (err) {
       console.error("Nu s-a putut sterge conversatia", err)

@@ -131,7 +131,7 @@ export default function CourseDetailPage() {
           {activeAction === "toggle-course" ? "Se actualizează..." : course.activ ? "Dezactivează" : "Reactivează"}
         </Button>
       ) : null}
-      sideContent={!pageLoading && course && courseIndexOpen ? (
+      sideContent={!pageLoading && course && courseIndexOpen && !isProfessor ? (
         <CourseIndexPanel
           weeks={weeks}
           documentsByWeek={documentsByWeek}
@@ -149,7 +149,7 @@ export default function CourseDetailPage() {
       <div className="space-y-6">
         {!pageLoading && course ? (
           <>
-            {!courseIndexOpen ? (
+            {!courseIndexOpen && !isProfessor ? (
               <button
                 type="button"
                 onClick={handleOpenCourseIndex}
@@ -216,10 +216,11 @@ export default function CourseDetailPage() {
                 weeks={weeks}
                 documentsByWeek={documentsByWeek}
                 expandedWeekIds={expandedWeekIds}
-                canEdit={canEdit}
-                isStudent={isStudent}
-                courseInscris={courseInscris}
-                activeAction={activeAction}
+                 canEdit={canEdit}
+                 isStudent={isStudent}
+                 isProfessor={isProfessor}
+                 courseInscris={courseInscris}
+                 activeAction={activeAction}
                 theme={theme}
                 lastWeekNumber={lastWeekNumber}
                 newWeekOpen={newWeekOpen}

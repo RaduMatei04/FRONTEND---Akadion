@@ -24,6 +24,7 @@ interface WeekCardProps {
   isExpanded: boolean
   canEdit: boolean
   isStudent: boolean
+  isProfessor: boolean
   courseInscris: boolean
   isLastWeek: boolean
   activeAction: string
@@ -51,6 +52,7 @@ export default function WeekCard({
   isExpanded,
   canEdit,
   isStudent,
+  isProfessor,
   courseInscris,
   isLastWeek,
   activeAction,
@@ -153,12 +155,13 @@ export default function WeekCard({
             />
           ) : null}
 
-          <WeekDocumentList
-            week={week}
-            documents={documents}
-            canEdit={canEdit}
-            activeAction={activeAction}
-            theme={theme}
+            <WeekDocumentList
+              week={week}
+              documents={documents}
+              canEdit={canEdit}
+              isProfessor={isProfessor}
+              activeAction={activeAction}
+              theme={theme}
             editingDocumentIds={editingDocumentIds}
             setEditingDocumentIds={setEditingDocumentIds}
             documentFileInputRefs={documentFileInputRefs}

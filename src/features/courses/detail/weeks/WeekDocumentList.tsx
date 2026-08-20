@@ -22,6 +22,7 @@ interface WeekDocumentListProps {
   week: WeekRecord
   documents: DocumentRecord[]
   canEdit: boolean
+  isProfessor: boolean
   activeAction: string
   theme: CourseTheme
   editingDocumentIds: EditingDocumentMap
@@ -117,6 +118,7 @@ export default function WeekDocumentList({
   week,
   documents,
   canEdit,
+  isProfessor,
   activeAction,
   theme,
   editingDocumentIds,
@@ -143,10 +145,12 @@ export default function WeekDocumentList({
       ) : null}
 
       {documents.map((document) => {
-        const canRetryIngest = canEdit && canRetryDocumentIngest(document)
+        const canRetryIngest = canEdit && !isProfessor && canRetryDocumentIngest(document)
         const isEditing = Boolean(editingDocumentIds[document.id])
         const currentFilename = extractFilename(document.urlDescarcare)
         const previewUrl = getDocumentHref(document)
+        const rawStatusLabel = getDocumentStatusLabel(document)
+        const displayStatusLabel = isProfessor && rawStatusLabel === "ERONAT" ? "NEPROCESAT" : rawStatusLabel
 
         return (
           <article key={document.id} className="rounded-3xl border border-[#e4d8cd] bg-white overflow-hidden">
@@ -159,7 +163,7 @@ export default function WeekDocumentList({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-base font-semibold text-slate-900">{document.titlu}</h3>
-                    <StatusBadge className={getDocumentStatusClasses(document)}>{getDocumentStatusLabel(document)}</StatusBadge>
+                    <StatusBadge className={getDocumentStatusClasses(document)}>{displayStatusLabel}</StatusBadge>
                   </div>
                   {currentFilename ? (
                     <div className="mt-1 flex items-center gap-1.5">
@@ -178,7 +182,7 @@ export default function WeekDocumentList({
                       )}
                     </div>
                   ) : null}
-                  {document.statusIndex === "ERONAT" && (
+                  {!isProfessor && document.statusIndex === "ERONAT" && (
                     <p className="mt-1 text-xs text-amber-600 font-medium">⚠ Fișier stocat, dar neindexat în AI. Apasă "Reîncearcă indexarea" pentru conectarea cu serviciul RAG.</p>
                   )}
                 </div>

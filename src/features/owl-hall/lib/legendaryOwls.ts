@@ -157,6 +157,15 @@ export function getStudentHomepageOwlRole(owlId: string | null | undefined) {
   return getLegendaryOwlById(owlId)?.name || "Dashboard STUDENT"
 }
 
+export function getStudentHomepageOwlHeroLabel(owlId: string | null | undefined) {
+  if (!owlId || owlId === DEFAULT_STUDENT_HOMEPAGE_OWL) {
+    return "DASHBOARD STUDENT"
+  }
+
+  const owlName = getLegendaryOwlById(owlId)?.name
+  return owlName ? `AVATARUL TĂU: ${owlName.toUpperCase()}` : "DASHBOARD STUDENT"
+}
+
 export function hasDiscoveredOwlHall(user: AuthUser | null | undefined) {
   try {
     return window.localStorage.getItem(getOwlHallDiscoveredStorageKey(user)) === "true"

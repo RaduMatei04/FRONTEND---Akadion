@@ -25,6 +25,7 @@ interface CourseWeeksTabProps {
   expandedWeekIds: ExpandedStateMap
   canEdit: boolean
   isStudent: boolean
+  isProfessor: boolean
   courseInscris: boolean
   activeAction: string
   theme: CourseTheme
@@ -55,6 +56,7 @@ export default function CourseWeeksTab({
   expandedWeekIds,
   canEdit,
   isStudent,
+  isProfessor,
   courseInscris,
   activeAction,
   theme,
@@ -179,6 +181,7 @@ export default function CourseWeeksTab({
               isExpanded={isExpanded}
               canEdit={canEdit}
               isStudent={isStudent}
+              isProfessor={isProfessor}
               courseInscris={courseInscris}
               isLastWeek={week.nrSaptamana === lastWeekNumber}
               activeAction={activeAction}

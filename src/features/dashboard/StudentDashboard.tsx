@@ -11,7 +11,7 @@ import { useCourseThemePreferences } from "@/features/courses/lib/courseThemeSto
 import { useAuth } from "@/auth/useAuth"
 import { enrollStudentCourse, getCourseErrorMessage, listStudentAvailableCourses, listStudentCourses } from "@/features/courses/api/courses"
 import { normalizeAvailableCourse, normalizeEnrolledCourse } from "@/features/courses/lib/courseView"
-import { getStudentHomepageOwlId, getStudentHomepageOwlImage, getStudentHomepageOwlRole, hasDiscoveredOwlHall } from "@/features/owl-hall/lib/legendaryOwls"
+import { getStudentHomepageOwlHeroLabel, getStudentHomepageOwlId, getStudentHomepageOwlImage, hasDiscoveredOwlHall } from "@/features/owl-hall/lib/legendaryOwls"
 import { getUserGreetingName } from "@/auth/user.utils"
 import { DEFAULT_COURSE_THEME } from "@/lib/courseThemes"
 
@@ -26,7 +26,7 @@ export default function StudentDashboard() {
   const [notice, setNotice] = useState("")
   const [activeAction, setActiveAction] = useState("")
   const [homepageOwlImage, setHomepageOwlImage] = useState(studentDashboardLogo)
-  const [homepageOwlRole, setHomepageOwlRole] = useState("Dashboard STUDENT")
+  const [homepageOwlHeroLabel, setHomepageOwlHeroLabel] = useState("AVATARUL TĂU: STUDENT")
   const [hasUnlockedOwlHall, setHasUnlockedOwlHall] = useState(false)
 
   const {
@@ -66,7 +66,7 @@ export default function StudentDashboard() {
   useEffect(() => {
     const homepageOwlId = getStudentHomepageOwlId(user)
     setHomepageOwlImage(getStudentHomepageOwlImage(homepageOwlId))
-    setHomepageOwlRole(getStudentHomepageOwlRole(homepageOwlId))
+    setHomepageOwlHeroLabel(getStudentHomepageOwlHeroLabel(homepageOwlId))
     setHasUnlockedOwlHall(hasDiscoveredOwlHall(user))
   }, [user])
 
@@ -96,7 +96,7 @@ export default function StudentDashboard() {
     <AppShell
       title={`Salut, ${getUserGreetingName(user)}!`}
       description="Gata de învățat?"
-      eyebrow={homepageOwlRole}
+      eyebrow={homepageOwlHeroLabel}
       heroClassName="relative min-h-[11rem] overflow-visible border-0 bg-linear-to-r from-[#434f9f] via-[#5869bd] to-[#7c89dc] text-white shadow-[0_24px_60px_rgba(67,79,159,0.26)] lg:items-start before:absolute before:-top-12 before:right-[-3.5rem] before:h-56 before:w-56 before:rounded-full before:bg-white/14 before:content-[''] after:absolute after:-bottom-20 after:left-[-4.5rem] after:h-64 after:w-64 after:rounded-full after:bg-white/10 after:content-['']"
       heroEyebrowClassName="text-white/72"
       heroTitleClassName="text-white"

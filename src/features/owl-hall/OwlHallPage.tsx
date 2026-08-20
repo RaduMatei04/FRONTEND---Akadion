@@ -93,10 +93,12 @@ export default function OwlHall() {
               <div className="absolute bottom-0 left-1/2 h-36 w-[82%] -translate-x-1/2 rounded-t-[999px] bg-[#020617]/28 blur-sm" />
               <div className="relative z-10 flex h-full min-h-[25rem] flex-col justify-between">
                 <div className="flex items-center justify-between gap-3">
-                   <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/12 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#eef4fb]">
-                    <Crown className="h-3.5 w-3.5" />
-                    {isSelectedOnHomepage ? "Pe homepage" : "Aleasă acum"}
-                  </span>
+                  {isSelectedOnHomepage ? (
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/12 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#eef4fb]">
+                      <Crown className="h-3.5 w-3.5" />
+                      SELECTAT
+                    </span>
+                  ) : null}
                 </div>
                 <div className="flex flex-1 items-end justify-center py-5">
                   <img src={selectedOwl.image} alt={selectedOwl.name} className="h-72 w-full max-w-[21rem] object-contain object-bottom drop-shadow-[0_24px_28px_rgba(2,6,23,0.48)] transition duration-500 lg:h-80 lg:max-w-[23rem]" />

@@ -80,7 +80,6 @@ export default function AkyConversationListPane(props: AkyConversationListPanePr
           {courseId ? (
             <div className="flex gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200/60">
               <button type="button" onClick={() => onFilterChange("course")} className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all ${filterMode === "course" ? "bg-white text-[#1e3a5f] shadow-xs" : "text-slate-500 hover:text-slate-800"}`}>Acest curs</button>
-              <button type="button" onClick={() => onFilterChange("all")} className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-all ${filterMode === "all" ? "bg-white text-[#1e3a5f] shadow-xs" : "text-slate-500 hover:text-slate-800"}`}>Toate</button>
             </div>
           ) : null}
         </div>
@@ -91,7 +90,7 @@ export default function AkyConversationListPane(props: AkyConversationListPanePr
           <div className="text-center py-8 px-4 bg-white rounded-2xl border border-slate-100 shadow-sm space-y-2">
             <MessageCircle className="h-9 w-9 text-slate-300 mx-auto" />
             <p className="text-sm font-semibold text-slate-700">{courseId && filterMode === "course" ? "Nu ai conversații anterioare la acest curs." : "Nu ai nicio conversație anterioară."}</p>
-            {courseId && filterMode === "course" ? <p className="text-xs text-slate-400 pb-1">Poți adresa prima întrebare la butonul de mai sus sau poți comuta pe separatoarea "Toate" pentru a vedea conversațiile de la celelalte cursuri.</p> : null}
+            {courseId && filterMode === "course" ? <p className="text-xs text-slate-400 pb-1">Poți adresa prima întrebare la butonul de mai sus.</p> : null}
           </div>
         ) : (
           <div className="space-y-2">
